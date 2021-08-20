@@ -6,7 +6,29 @@ defmodule Entendu.Application do
   use Application
 
   def start(_type, _args) do
-    children = [
+    # topologies = [
+    #   chat: [
+    #     strategy: Cluster.Strategy.Gossip
+    #   ]
+    # ]
+
+    topologies = [
+      k8s_entendu: [
+        strategy: Elixir.Cluster.Strategy.Kubernetes.DNS,
+          config: [
+            service: "entendu-nodes",
+            application_name: "entendu"
+          ]
+        ]
+      ]
+
+    children = case Application.get_env(:frayt_elixir, :enable_k8s) do
+      true -> [
+        {Cluster.Supervisor, [topologies, [name: Entendu.ClusterSupervisor]]}
+      ]
+      _ -> []
+    end
+    |> Kernel.++([
       # Start the Ecto repository
       Entendu.Repo,
       # Start the Telemetry supervisor
@@ -17,7 +39,7 @@ defmodule Entendu.Application do
       EntenduWeb.Endpoint
       # Start a worker by calling: Entendu.Worker.start_link(arg)
       # {Entendu.Worker, arg}
-    ]
+    ])
 
     # See https://hexdocs.pm/elixir/Supervisor.html
     # for other strategies and supported options

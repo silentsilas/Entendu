@@ -5,7 +5,7 @@ config :entendu, Entendu.Repo,
   username: "postgres",
   password: "postgres",
   database: "entendu_dev",
-  hostname: "localhost",
+  hostname: System.get_env("POSTGRES_HOST", "localhost"),
   show_sensitive_data_on_connection_error: true,
   pool_size: 10
 
@@ -16,7 +16,7 @@ config :entendu, Entendu.Repo,
 # watchers to your application. For example, we use it
 # with webpack to recompile .js and .css sources.
 config :entendu, EntenduWeb.Endpoint,
-  http: [port: 4000],
+  http: [port: System.get_env("PORT", "4000")],
   debug_errors: true,
   code_reloader: true,
   check_origin: false,
@@ -74,3 +74,21 @@ config :phoenix, :stacktrace_depth, 20
 
 # Initialize plugs at runtime for faster development compilation
 config :phoenix, :plug_init_mode, :runtime
+
+config :entendu, :enable_k8s, false
+
+# config :libcluster,
+#   topologies: [
+#     k8s_example: [
+#       strategy: Cluster.Strategy.Kubernetes,
+#       config: [
+#         # For Elixir Releases, use System.get_env instead of the distillery env vars below.
+#         kubernetes_selector: System.get_env("LIBCLUSTER_KUBERNETES_SELECTOR"),
+#         kubernetes_node_basename: System.get_env("LIBCLUSTER_KUBERNETES_NODE_BASENAME")
+#       ]
+#     ]
+#   ]
+
+if File.exists?("config/dev.secret.exs") do
+  import_config "dev.secret.exs"
+end

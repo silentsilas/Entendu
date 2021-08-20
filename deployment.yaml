@@ -1,0 +1,75 @@
+---
+kind: Deployment
+apiVersion: apps/v1
+metadata:
+  name: entendu
+  namespace: default
+spec:
+  replicas: 4
+  selector:
+    matchLabels:
+      app: entendu
+
+  template:
+    metadata:
+      labels:
+        app: entendu
+    spec:
+      containers:
+      - name: phoenix-entendu
+        image: entendu:1.1.1 #alvises/phoenix-chat-example:libcluster-kube
+        ports:
+        - containerPort: 4000
+        env:
+        - name: PORT
+          value: "4000"
+        - name: PHOENIX_ENTENDU_HOST
+          value: "localhost"
+        - name: ERLANG_COOKIE
+          value: "secret"
+        - name: MY_POD_IP
+          valueFrom:
+            fieldRef:
+              fieldPath: status.podIP
+        # command: ["entendu"]
+        # args: [
+        #   "start"
+        # ]
+        command: ["elixir"]
+        args: [
+          "--name", 
+          "entendu@$(MY_POD_IP)", 
+          "--cookie","$(ERLANG_COOKIE)", 
+          "--no-halt", 
+          "-S","mix",
+          "phx.server"
+        ]
+---
+kind: Service
+apiVersion: v1
+
+metadata:
+  name: entendu-nodes
+  namespace: default
+spec:
+  clusterIP: None
+  selector:
+    app: entendu
+  ports:
+    - name: epmd
+      port: 4369
+---
+kind: Service
+apiVersion: v1
+
+metadata:
+  name: entendu
+  namespace: default
+spec:
+  type: LoadBalancer
+  selector:
+    app: entendu
+  ports:
+    - name: http
+      port: 8000
+      targetPort: 4000
