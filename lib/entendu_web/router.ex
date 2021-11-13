@@ -17,8 +17,16 @@ defmodule EntenduWeb.Router do
   scope "/", EntenduWeb do
     pipe_through :browser
 
-    live "/", PageLive, :index
-    live "/for", LinkLive.For
+    get "/", PageController, :index
+    get "/just", LinkController, :just
+  end
+
+  scope "/auth", EntenduWeb do
+    pipe_through :browser
+
+    get "/:provider", AuthController, :request
+    get "/:provider/callback", AuthController, :callback
+    delete "/logout", AuthController, :delete
   end
 
   # Other scopes may use custom stacks.

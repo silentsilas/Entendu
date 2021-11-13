@@ -48,7 +48,8 @@ defmodule Entendu.MixProject do
       {:jason, "~> 1.0"},
       {:plug_cowboy, "~> 2.0"},
       {:libcluster, "~> 3.2"},
-      {:ueberauth, "~> 0.6.3"}
+      {:ueberauth, "~> 0.7.0"},
+      {:ueberauth_github, "~> 0.8.1"}
     ]
   end
 

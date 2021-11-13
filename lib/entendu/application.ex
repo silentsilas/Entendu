@@ -6,12 +6,6 @@ defmodule Entendu.Application do
   use Application
 
   def start(_type, _args) do
-    # topologies = [
-    #   chat: [
-    #     strategy: Cluster.Strategy.Gossip
-    #   ]
-    # ]
-
     topologies = [
       k8s_entendu: [
         strategy: Elixir.Cluster.Strategy.Kubernetes.DNS,
