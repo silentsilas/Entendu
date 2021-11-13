@@ -2,6 +2,8 @@
 
 To start your Phoenix server:
 
+  * (optional) Install ['ASDF'](https://asdf-vm.com/) along with the ['Erlang'](https://github.com/asdf-vm/asdf-erlang), ['Elixir'](https://github.com/asdf-vm/asdf-elixir), and ['Node'](https://github.com/asdf-vm/asdf-nodejs) plugins
+  * (optional) Run `asdf install`. Now this project will always use the correct erlang/elixir/node/npm versions.
   * Install dependencies with `mix deps.get`
   * Create and migrate your database with `mix ecto.setup`
   * Install Node.js dependencies with `npm install` inside the `assets` directory
