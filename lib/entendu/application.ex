@@ -9,31 +9,35 @@ defmodule Entendu.Application do
     topologies = [
       k8s_entendu: [
         strategy: Elixir.Cluster.Strategy.Kubernetes.DNS,
-          config: [
-            service: "entendu-nodes",
-            application_name: "entendu"
-          ]
+        config: [
+          service: "entendu-nodes",
+          application_name: "entendu"
         ]
       ]
+    ]
 
-    children = case Application.get_env(:frayt_elixir, :enable_k8s) do
-      true -> [
-        {Cluster.Supervisor, [topologies, [name: Entendu.ClusterSupervisor]]}
-      ]
-      _ -> []
-    end
-    |> Kernel.++([
-      # Start the Ecto repository
-      Entendu.Repo,
-      # Start the Telemetry supervisor
-      EntenduWeb.Telemetry,
-      # Start the PubSub system
-      {Phoenix.PubSub, name: Entendu.PubSub},
-      # Start the Endpoint (http/https)
-      EntenduWeb.Endpoint
-      # Start a worker by calling: Entendu.Worker.start_link(arg)
-      # {Entendu.Worker, arg}
-    ])
+    children =
+      case Application.get_env(:frayt_elixir, :enable_k8s) do
+        true ->
+          [
+            {Cluster.Supervisor, [topologies, [name: Entendu.ClusterSupervisor]]}
+          ]
+
+        _ ->
+          []
+      end
+      |> Kernel.++([
+        # Start the Ecto repository
+        Entendu.Repo,
+        # Start the Telemetry supervisor
+        EntenduWeb.Telemetry,
+        # Start the PubSub system
+        {Phoenix.PubSub, name: Entendu.PubSub},
+        # Start the Endpoint (http/https)
+        EntenduWeb.Endpoint
+        # Start a worker by calling: Entendu.Worker.start_link(arg)
+        # {Entendu.Worker, arg}
+      ])
 
     # See https://hexdocs.pm/elixir/Supervisor.html
     # for other strategies and supported options

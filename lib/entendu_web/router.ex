@@ -19,6 +19,8 @@ defmodule EntenduWeb.Router do
 
     get "/", PageController, :index
     get "/just", LinkController, :just
+    get "/just/for", LinkController, :for
+    get "/just/for/you", LinkController, :you
   end
 
   scope "/auth", EntenduWeb do
