@@ -18,9 +18,11 @@ defmodule EntenduWeb.Router do
     pipe_through :browser
 
     get "/", PageController, :index
-    get "/just", LinkController, :just
-    get "/just/for", LinkController, :for
-    get "/just/for/you", LinkController, :you
+    get "/just", LinkController, :just_page
+    post "/just", LinkController, :just
+    get "/just/for", LinkController, :for_page
+    post "/just/for", LinkController, :for
+    get "/just/for/you", LinkController, :you_page
   end
 
   scope "/auth", EntenduWeb do

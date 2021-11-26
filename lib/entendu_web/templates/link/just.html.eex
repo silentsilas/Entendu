@@ -3,4 +3,8 @@
     <p>There will be a form here</p>
     <p>And a file input here</p>
     <p>Then a next button</p>
+    <form phx-submit="just">
+        <textarea></textarea>
+        <button>Submit</button>
+    </form>
 </section>

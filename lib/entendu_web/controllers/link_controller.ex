@@ -5,15 +5,25 @@ defmodule EntenduWeb.LinkController do
 
   use EntenduWeb, :controller
 
-  def just(conn, _params) do
+  def just_page(conn, _params) do
     render(conn, "just.html")
   end
 
-  def for(conn, _params) do
+  def just(conn, %{encrypted_contents: contents}) do
+    conn
+    |> put_session(:encrypted_contents, contents)
+    |> redirect(to: "/just/for")
+  end
+
+  def for_page(conn, _params) do
     render(conn, "for.html")
   end
 
-  def you(conn, _params) do
+  def for(conn, %{username: username, service: service}) do
+    {:error, "not implemented"}
+  end
+
+  def you_page(conn, _params) do
     render(conn, "you.html")
   end
 end
