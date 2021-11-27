@@ -7,17 +7,19 @@
     "watch": "webpack --mode development --watch"
   },
   "dependencies": {
-    "@intended/intended-ui": "0.1.16",
+    "@intended/intended-ui": "0.1.19",
     "phoenix": "file:../deps/phoenix",
     "phoenix_html": "file:../deps/phoenix_html",
     "phoenix_live_view": "file:../deps/phoenix_live_view",
     "react": "^17.0.2",
     "react-dom": "^17.0.2",
+    "react-phoenix": "file:../deps/react_phoenix",
     "topbar": "^0.1.4"
   },
   "devDependencies": {
     "@babel/core": "^7.0.0",
     "@babel/preset-env": "^7.0.0",
+    "@babel/preset-react": "^7.16.0",
     "@types/phoenix": "^1.5.3",
     "@types/react": "^17.0.37",
     "@types/react-dom": "^17.0.11",

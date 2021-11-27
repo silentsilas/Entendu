@@ -1,10 +1,7 @@
-<section class="phx-hero">
-  <h1>Überauth + Phoenix Example</h1>
-  <p>
-    This is an application to show an example of how to wire up
-    <a href="https://github.com/ueberauth/ueberauth">Überauth</a> with
-    <a href="https://github.com/phoenixframework/phoenix">Phoenix</a>.
-  </p>
+<section>
+
+  <%= react_component("Components.SplashPage") %>
+
   <%= if @current_user do %>
     <h2>Welcome, <%= @current_user.name %>!</h2>
     <div>
@@ -13,7 +10,7 @@
     <%= link "Logout", to: Routes.auth_path(@conn, :delete), method: "delete", class: "button" %>
     <br>
   <% else %>
-    <ul style="list-style: none">
+    <ul style="display: none;">
       <li>
         <a class="button" href="<%= Routes.auth_path(@conn, :request, "github") %>">
           <i class="fa fa-github"></i>

@@ -1,6 +1,1 @@
-<section class="phx-hero">
-    <h2>Create a secret!</h2>
-    <p>There will be a form here</p>
-    <p>And a file input here</p>
-    <p>Then a next button</p>
-</section>
+<%= react_component("Components.YouPage") %>

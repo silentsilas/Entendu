@@ -1,7 +1,8 @@
 // We need to import the CSS so that webpack will load it.
 // The MiniCssExtractPlugin is used to separate it out into
 // its own CSS file.
-// import "../css/app.css"
+import "react-phoenix"
+import "../css/app.css"
 // const _css = require("../css/app.css");
 
 // webpack automatically bundles all modules in your
@@ -17,10 +18,11 @@ import "phoenix_html"
 import {Socket} from "phoenix"
 import topbar from "topbar"
 import {LiveSocket} from "phoenix_live_view"
-import React from "react";
-import ReactDOM from "react-dom";
+
 import SplashPage from './pages/SplashPage';
-import { GlobalStyle } from '@intended/intended-ui';
+import JustPage from './pages/JustPage'
+import ForPage from './pages/ForPage'
+import YouPage from './pages/YouPage'
 
 let csrfToken = document.querySelector("meta[name='csrf-token']").getAttribute("content")
 let liveSocket = new LiveSocket("/live", Socket, {params: {_csrf_token: csrfToken}})
@@ -39,10 +41,34 @@ liveSocket.connect()
 // >> liveSocket.disableLatencySim()
 window.liveSocket = liveSocket
 
-ReactDOM.render(<div>
-    <GlobalStyle />
-    <SplashPage />
-  </div>
-  ,
-  document.getElementById("root")
-);
+window.Components = {
+  SplashPage, JustPage, ForPage, YouPage
+}
+
+// const root_el = document.getElementById("root");
+// const page = root_el.getAttribute("page")
+// let result;
+
+// switch(page) {
+//   case "splash": 
+//     result = <SplashPage />
+//     break;
+//   case "just":
+//     result = <JustPage />
+//     break;
+//   case "for":
+//   case "you":
+//   case "identify":
+//   case "revealed":
+//   default:
+//     null
+//     break;
+// }
+
+// ReactDOM.render(<React.StrictMode>
+//     <GlobalStyle />
+//     { result }
+//   </React.StrictMode>
+//   ,
+//   root_el
+// );

@@ -50,7 +50,11 @@ module.exports = (env, options) => {
       ]
     },
     resolve: {
-      extensions: [".ts", ".tsx", ".js", ".jsx"]
+      extensions: [".ts", ".tsx", ".js", ".jsx"],
+      alias: {
+        react: path.resolve(__dirname, './node_modules/react'),
+        'react-dom': path.resolve(__dirname, './node_modules/react-dom')
+      }
     },
     plugins: [
       new MiniCssExtractPlugin({ filename: '../css/app.css' }),
