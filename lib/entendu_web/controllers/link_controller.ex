@@ -4,22 +4,40 @@ defmodule EntenduWeb.LinkController do
   """
 
   use EntenduWeb, :controller
+  use Params
+
+  alias Entendu.Links
+  alias Links.Link
+  alias Ecto.Changeset
 
   def just_page(conn, _params) do
     render(conn, "just.html")
   end
 
-  def just(conn, %{encrypted_contents: contents}) do
-    conn
-    |> put_session(:encrypted_contents, contents)
-    |> redirect(to: "/just/for")
+  defparams first_step %{
+    burn_after_reading: [field: :boolean, default: false],
+    expires: :utc_datetime,
+    filename: :string,
+    filetype: :string,
+    text_content: :string,
+    file_content: :string
+  }
+
+  def just(conn, params) do
+    with %Changeset{valid?: true} = changeset <- first_step(params),
+        link_params <- Params.to_map(changeset),
+        {:ok, %Link{} = link} <- Links.create_link(link_params) do
+      conn
+      |> assign(:link, link)
+      |> render("show_authorized", link: link)
+    end
   end
 
   def for_page(conn, _params) do
     render(conn, "for.html")
   end
 
-  def for(conn, %{username: username, service: service}) do
+  def for(_conn, %{username: _username, service: _service}) do
     {:error, "not implemented"}
   end
 

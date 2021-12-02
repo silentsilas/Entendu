@@ -50,7 +50,8 @@ defmodule Entendu.MixProject do
       {:libcluster, "~> 3.2"},
       {:ueberauth, "~> 0.7.0"},
       {:ueberauth_github, "~> 0.8.1"},
-      {:react_phoenix, "~> 1.3"}
+      {:react_phoenix, "~> 1.3"},
+      {:params, "~> 2.2"}
     ]
   end
 

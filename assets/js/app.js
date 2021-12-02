@@ -44,31 +44,3 @@ window.liveSocket = liveSocket
 window.Components = {
   SplashPage, JustPage, ForPage, YouPage
 }
-
-// const root_el = document.getElementById("root");
-// const page = root_el.getAttribute("page")
-// let result;
-
-// switch(page) {
-//   case "splash": 
-//     result = <SplashPage />
-//     break;
-//   case "just":
-//     result = <JustPage />
-//     break;
-//   case "for":
-//   case "you":
-//   case "identify":
-//   case "revealed":
-//   default:
-//     null
-//     break;
-// }
-
-// ReactDOM.render(<React.StrictMode>
-//     <GlobalStyle />
-//     { result }
-//   </React.StrictMode>
-//   ,
-//   root_el
-// );

@@ -7,7 +7,6 @@ const JustPage = () => {
   const [secretInput, setSecretInput] = useState("");
   const [fileInput, setFileInput] = useState<File | null>(null);
   const [fileName, setFileName] = useState("");
-  const [encryptedSecret, setEncryptedSecret] = useState("");
 
   const handleChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
     setSecretInput(e.target.value);
@@ -45,18 +44,13 @@ const JustPage = () => {
       encoded
     );
 
-    // encrypted will be sent to lumen backend
-    HexMix.arrayBufferToString(encrypted, (result: string) => {
-      setEncryptedSecret(result);
-    });
-
     const keyHex = HexMix.uint8ToHex(new Uint8Array(exported));
     const ivHex = HexMix.uint8ToHex(iv);
 
     const formData = new FormData();
     const blobData = new Blob([encrypted]);
 
-    formData.append('blob', blobData);
+    formData.append('text_content', blobData);
     formData.append('filetype', 'text/plain');
     formData.append('filename', 'secret.txt');
 
@@ -94,7 +88,6 @@ const JustPage = () => {
           </TextAlignWrapper>
           <Spacer space="1.6rem" />
           <FileInput id="fileInput" value={fileName} handleFile={handleFile} />
-          { encryptedSecret ? "" : encryptedSecret }
           { fileInput ? "" : ""}
           <Spacer space="4rem" />
           <div
