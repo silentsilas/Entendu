@@ -2,6 +2,8 @@ defmodule Entendu.Links.Link do
   use Ecto.Schema
   import Ecto.Changeset
 
+  @primary_key {:id, Ecto.UUID, autogenerate: true}
+
   schema "links" do
     field :burn_after_reading, :boolean, default: false
     field :expires, :utc_datetime
@@ -16,7 +18,13 @@ defmodule Entendu.Links.Link do
   @doc false
   def changeset(link, attrs) do
     link
-    |> cast(attrs, [:expires, :burn_after_reading, :filename, :filetype, :text_content, :file_content])
-    |> validate_required([:expires, :burn_after_reading, :filename, :filetype])
+    |> cast(attrs, [
+      :expires,
+      :burn_after_reading,
+      :filename,
+      :filetype,
+      :text_content,
+      :file_content
+    ])
   end
 end

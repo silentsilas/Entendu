@@ -10,6 +10,8 @@ use Mix.Config
 config :entendu,
   ecto_repos: [Entendu.Repo]
 
+config :entendu, Entendu.Repo, migration_primary_key: [type: :uuid]
+
 # Configures the endpoint
 config :entendu, EntenduWeb.Endpoint,
   url: [host: "dev.intended.link"],
