@@ -1,1 +1,1 @@
-<%= react_component("Components.JustPage") %>
+<%= react_component("Components.JustPage", %{ csrf: Plug.CSRFProtection.get_csrf_token() }) %>

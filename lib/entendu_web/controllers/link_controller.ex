@@ -33,8 +33,6 @@ defmodule EntenduWeb.LinkController do
          link_params <- Params.to_map(changeset),
          {:ok, %Link{} = link} <- Links.create_link(link_params) do
       conn
-      |> put_status(:created)
-      |> assign(:link, link)
       |> render("show_authorized.json", %{link: link})
     end
   end
@@ -43,8 +41,21 @@ defmodule EntenduWeb.LinkController do
     render(conn, "for.html")
   end
 
-  def for(_conn, %{username: _username, service: _service}) do
-    {:error, "not implemented"}
+  defparams(
+    second_step(%{
+      service: :string,
+      recipient: :string
+    })
+  )
+
+  def for(conn, %{link_id: link_id} = params) do
+    with %Changeset{valid?: true} = changeset <- first_step(params),
+         link_params <- Params.to_map(changeset),
+         %Link{} = link <- Links.get_link(link_id),
+         Links.update_link(link, link_params) do
+      conn
+      |> render("show_authorized.json", %{link: link})
+    end
   end
 
   def you_page(conn, _params) do

@@ -1,8 +1,27 @@
-import React from "react";
+import React, { useState } from "react";
 
 import { ProgressIndicator, Header2, Button, IconArrow, InputButtonWithIcon, Label, Input, CenteredContainer, SpaceBetweenContainer, Spacer, TextAlignWrapper, GlobalStyle } from "@intended/intended-ui";
 
 const YouPage = () => {
+  const calculateUrl = () => {
+    const linkId = sessionStorage.getItem("link_id");
+    const keyHex = sessionStorage.getItem("key_hex");
+    const ivHex = sessionStorage.getItem("iv_hex");
+
+    `${window.location.origin}/just/for/you/${linkId}#${keyHex}.${ivHex}`
+    return "";
+  };
+
+  const [url, setUrl] = useState(calculateUrl());
+
+  const copyUrl = async () => {
+    try { 
+      navigator.clipboard.writeText(url);
+    } catch (err: any) {
+      alert("Could not copy url to clipboard.");
+    }
+  }
+
   return (
     <React.StrictMode>
       <GlobalStyle />
@@ -18,8 +37,8 @@ const YouPage = () => {
           </SpaceBetweenContainer>
           <InputButtonWithIcon
             id="shareLink"
-            onClick={() => {}}
-            value="https://intended.link/for/you/MWUzZjg4YmEtZmNmNy00M..."
+            onClick={copyUrl}
+            value={url}
             variant="copy"
           />
           <Spacer space="2rem" />
@@ -39,7 +58,10 @@ const YouPage = () => {
             <Button variant="secondary" onClick={() => window.location.href = "/just/for"}>
               <IconArrow arrowDirection="left" />
             </Button>
-            <Button onClick={() => {}}>Generate Secret Code</Button>
+            <Button onClick={() => {
+              sessionStorage.clear();
+              window.location.href = "/just";
+            }}>Create Another Secret</Button>
           </SpaceBetweenContainer>
         </CenteredContainer>
       </CenteredContainer>

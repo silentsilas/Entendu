@@ -1,6 +1,5 @@
 defmodule EntenduWeb.LinkView do
   use EntenduWeb, :view
-  alias EntenduWeb.LinkView
 
   def render("show_authorized.json", %{link: link}) do
     %{

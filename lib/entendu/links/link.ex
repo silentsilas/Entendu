@@ -11,6 +11,8 @@ defmodule Entendu.Links.Link do
     field :filetype, :string
     field :text_content, :string
     field :file_content, :string
+    field :recipient, :string
+    field :service, :string
 
     timestamps()
   end
@@ -24,7 +26,9 @@ defmodule Entendu.Links.Link do
       :filename,
       :filetype,
       :text_content,
-      :file_content
+      :file_content,
+      :recipient,
+      :service
     ])
   end
 end

@@ -1,0 +1,3 @@
+interface Link {
+    id: string
+}

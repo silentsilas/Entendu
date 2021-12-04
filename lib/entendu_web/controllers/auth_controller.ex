@@ -7,7 +7,6 @@ defmodule EntenduWeb.AuthController do
 
   plug Ueberauth
 
-  alias Ueberauth.Strategy.Helpers
   alias Entendu.UserFromAuth
 
   def delete(conn, _params) do

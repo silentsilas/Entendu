@@ -3,7 +3,7 @@ import React, { useState } from "react";
 import { ProgressIndicator, Header2, Button, IconArrow, Label, FileInput, TextArea, CenteredContainer, Spacer, TextAlignWrapper, GlobalStyle } from '@intended/intended-ui';
 import HexMix from "../utils/hexmix";
 
-const JustPage = () => {
+const JustPage = (props) => {
   const [secretInput, setSecretInput] = useState("");
   const [fileInput, setFileInput] = useState<File | null>(null);
   const [fileName, setFileName] = useState("");
@@ -55,12 +55,17 @@ const JustPage = () => {
     formData.append('filename', 'secret.txt');
 
     try {
-      await fetch(`${window.location.origin}/just`, { 
+      const link: unknown = await fetch(`${window.location.origin}/just`, { 
+        headers: {
+          "X-CSRF-Token": props.csrf
+        },
         body: formData,
         method: "POST"
       });
-      const url = `${window.location.origin}/just/for#${keyHex}.${ivHex}`;
-      window.location.href = url
+      sessionStorage.setItem("link_id", (link as Link).id);
+      sessionStorage.setItem("key_hex", keyHex);
+      sessionStorage.setItem("iv_hex", ivHex);
+      window.location.href = `${window.location.origin}/just/for`;
     } catch (err: any) {
       alert(err.message);
     }

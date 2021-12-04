@@ -2,6 +2,7 @@ import React, { useState } from "react";
 
 import { ProgressIndicator, Header2, Button, IconArrow, Label, Input, Select, CenteredContainer, SpaceBetweenContainer, Spacer, TextAlignWrapper, GlobalStyle } from "@intended/intended-ui";
 
+
 const ForPage = () => {
   const [recipientInput, setRecipientInput] = useState("");
   const [serviceSelect, setServiceSelect] = useState("");
@@ -14,6 +15,35 @@ const ForPage = () => {
 
   const handleServiceChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
     setServiceSelect(e.target.value);
+  };
+
+  const postContacts = async () => {
+    const fragmentData = window.location.hash.split('.');
+    if (fragmentData.length <= 0) {
+      alert("No key found in fragment URI");
+      return;
+    }
+
+    const linkId = sessionStorage.getItem("link_id");
+    if (linkId == null || linkId == "") {
+      alert("No created link found in storage");
+      return;
+    }
+
+    const formData = new FormData();
+    formData.append('recipient', recipientInput);
+    formData.append('service', serviceSelect);
+    formData.append("link_id", linkId);
+
+    try {
+      await fetch(`${window.location.origin}/just/for`, { 
+        body: formData,
+        method: "POST"
+      });
+      window.location.href = `${window.location.origin}/just/for/you`;
+    } catch (err: any) {
+      alert(err.message);
+    }
   };
 
   return (
@@ -50,7 +80,7 @@ const ForPage = () => {
             <Button variant="secondary" onClick={() => window.location.href = "/just"}>
               <IconArrow arrowDirection="left" />
             </Button>
-            <Button onClick={() => window.location.href = "/just/for/you"}>Generate Secret Code</Button>
+            <Button onClick={postContacts}>Generate Secret Code</Button>
           </SpaceBetweenContainer>
         </CenteredContainer>
       </CenteredContainer>
