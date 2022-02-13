@@ -1,12 +1,20 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 
 import { ProgressIndicator, Header2, Button, IconArrow, Label, FileInput, TextArea, CenteredContainer, Spacer, TextAlignWrapper, GlobalStyle } from '@intended/intended-ui';
 import HexMix from "../utils/hexmix";
 
-const JustPage = (props) => {
+type JustPageProps = {
+  csrf: string
+}
+
+const JustPage = (props: JustPageProps) => {
   const [secretInput, setSecretInput] = useState("");
   const [fileInput, setFileInput] = useState<File | null>(null);
   const [fileName, setFileName] = useState("");
+
+  useEffect(() => {
+    sessionStorage.clear();
+  }, [])
 
   const handleChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
     setSecretInput(e.target.value);
@@ -51,18 +59,20 @@ const JustPage = (props) => {
     const blobData = new Blob([encrypted]);
 
     formData.append('text_content', blobData);
-    formData.append('filetype', 'text/plain');
-    formData.append('filename', 'secret.txt');
+    // formData.append('filetype', 'text/plain');
+    // formData.append('filename', 'secret.txt');
 
     try {
-      const link: unknown = await fetch(`${window.location.origin}/just`, { 
+      const link: Response = await fetch(`${window.location.origin}/just`, { 
         headers: {
           "X-CSRF-Token": props.csrf
         },
         body: formData,
         method: "POST"
       });
-      sessionStorage.setItem("link_id", (link as Link).id);
+      const { id: link_id } = await link.json()
+
+      sessionStorage.setItem("link_id", link_id);
       sessionStorage.setItem("key_hex", keyHex);
       sessionStorage.setItem("iv_hex", ivHex);
       window.location.href = `${window.location.origin}/just/for`;

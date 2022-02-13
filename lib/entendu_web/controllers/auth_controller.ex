@@ -23,18 +23,27 @@ defmodule EntenduWeb.AuthController do
   end
 
   def callback(%{assigns: %{ueberauth_auth: auth}} = conn, _params) do
-    case UserFromAuth.find_or_create(auth) do
-      {:ok, user} ->
+    # TODO: turn this into plug that only proceeds if current_link session var exists
+    %{ id: link_id, recipient: recipient } = get_session(conn, :current_link)
+
+    with {:ok, user} <- UserFromAuth.find_or_create(auth),
+      true <- UserFromAuth.can_access?(recipient, user.emails) do
+        # TODO: send over encrypted data that the frontend can decrypt
         conn
-        |> put_flash(:info, "Successfully authenticated.")
         |> put_session(:current_user, user)
         |> configure_session(renew: true)
-        |> redirect(to: "/")
+        |> redirect(to: "/just/for/you/#{link_id}")
+
+    else
+      false ->
+        conn
+        |> put_flash(:error, "#{recipient} was not found in your list of verified emails")
+        |> redirect(to: "/just/for/you/#{link_id}")
 
       {:error, reason} ->
         conn
         |> put_flash(:error, reason)
-        |> redirect(to: "/")
+        |> redirect(to: "/just/for/you/#{link_id}")
     end
   end
 end

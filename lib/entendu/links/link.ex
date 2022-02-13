@@ -1,5 +1,7 @@
 defmodule Entendu.Links.Link do
   use Ecto.Schema
+  use Waffle.Ecto.Schema
+  alias Entendu.EncryptedLink
   import Ecto.Changeset
 
   @primary_key {:id, Ecto.UUID, autogenerate: true}
@@ -9,8 +11,8 @@ defmodule Entendu.Links.Link do
     field :expires, :utc_datetime
     field :filename, :string
     field :filetype, :string
-    field :text_content, :string
-    field :file_content, :string
+    field :text_content, EncryptedLink.Type
+    field :file_content, EncryptedLink.Type
     field :recipient, :string
     field :service, :string
 
@@ -25,10 +27,10 @@ defmodule Entendu.Links.Link do
       :burn_after_reading,
       :filename,
       :filetype,
-      :text_content,
-      :file_content,
       :recipient,
       :service
     ])
+    |> cast_attachments(attrs, [:text_content, :file_content])
+
   end
 end

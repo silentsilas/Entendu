@@ -23,6 +23,7 @@ defmodule EntenduWeb.Router do
     get "/just/for", LinkController, :for_page
     post "/just/for", LinkController, :for
     get "/just/for/you", LinkController, :you_page
+    get "/just/for/you/:id", LinkController, :auth_page
   end
 
   scope "/auth", EntenduWeb do

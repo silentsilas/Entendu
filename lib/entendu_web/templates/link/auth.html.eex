@@ -1,0 +1,1 @@
+<%= react_component("Components.AuthPage", %{ csrf: Plug.CSRFProtection.get_csrf_token(), service: @service, recipient: @recipient, user: @current_user }) %>

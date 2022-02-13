@@ -51,7 +51,9 @@ defmodule Entendu.MixProject do
       {:ueberauth, "~> 0.7.0"},
       {:ueberauth_github, "~> 0.8.1"},
       {:react_phoenix, "~> 1.3"},
-      {:params, "~> 2.2"}
+      {:params, "~> 2.2"},
+      {:waffle, "~> 1.1"},
+      {:waffle_ecto, "~> 0.0.11"}
     ]
   end
 

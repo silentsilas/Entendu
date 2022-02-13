@@ -3,9 +3,13 @@ import React, { useState } from "react";
 import { ProgressIndicator, Header2, Button, IconArrow, Label, Input, Select, CenteredContainer, SpaceBetweenContainer, Spacer, TextAlignWrapper, GlobalStyle } from "@intended/intended-ui";
 
 
-const ForPage = () => {
+type ForPageProps = {
+  csrf: string
+}
+
+const ForPage = (props: ForPageProps) => {
   const [recipientInput, setRecipientInput] = useState("");
-  const [serviceSelect, setServiceSelect] = useState("");
+  const [serviceSelect, setServiceSelect] = useState("github");
 
   const handleRecipientInputChange = (
     e: React.ChangeEvent<HTMLInputElement>
@@ -18,14 +22,14 @@ const ForPage = () => {
   };
 
   const postContacts = async () => {
-    const fragmentData = window.location.hash.split('.');
-    if (fragmentData.length <= 0) {
-      alert("No key found in fragment URI");
-      return;
-    }
+    // const fragmentData = window.location.hash.split('.');
+    // if (fragmentData.length <= 0) {
+    //   alert("No key found in fragment URI");
+    //   return;
+    // }
 
     const linkId = sessionStorage.getItem("link_id");
-    if (linkId == null || linkId == "") {
+    if (!linkId) {
       alert("No created link found in storage");
       return;
     }
@@ -36,10 +40,18 @@ const ForPage = () => {
     formData.append("link_id", linkId);
 
     try {
-      await fetch(`${window.location.origin}/just/for`, { 
+      const results = await fetch(`${window.location.origin}/just/for`, { 
+        headers: {
+          "X-CSRF-Token": props.csrf
+        },
         body: formData,
         method: "POST"
       });
+      if (!results.ok) {
+        throw new Error('Network response was not OK');
+      }
+
+      await results.json();
       window.location.href = `${window.location.origin}/just/for/you`;
     } catch (err: any) {
       alert(err.message);
@@ -74,7 +86,9 @@ const ForPage = () => {
             id="serviceSelector"
             onChange={handleServiceChange}
             value={serviceSelect}
-          />
+          >
+            <option value='github'>Github</option>
+            </Select>
           <Spacer space="3rem" />
           <SpaceBetweenContainer>
             <Button variant="secondary" onClick={() => window.location.href = "/just"}>

@@ -18,7 +18,7 @@ config :entendu, Entendu.Repo,
 config :entendu, EntenduWeb.Endpoint,
   http: [port: System.get_env("PORT", "4000")],
   https: [
-    port: 4001,
+    port: 443,
     cipher_suite: :strong,
     certfile: "priv/cert/selfsigned.pem",
     keyfile: "priv/cert/selfsigned_key.pem"

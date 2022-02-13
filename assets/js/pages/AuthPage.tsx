@@ -1,16 +1,54 @@
-// import HexMix from "../utils/hexmix";
-// const fragmentData = window.location.hash.split('.');
-//     if (fragmentData.length <= 0) {
-//       alert("No key found in fragment URI");
-//       return;
-//     }
-//     const key = HexMix.hexToUint8(fragmentData[0]);
-//     const iv = HexMix.hexToUint8(fragmentData[1]);
+import { Button, CenteredContainer, GlobalStyle, Header2, Header3, Input, Label, Spacer, TextAlignWrapper } from "@intended/intended-ui";
+import React, { useEffect } from "react";
 
-//     const importedKey = await window.crypto.subtle.importKey(
-//       'raw',
-//       key,
-//       'AES-GCM',
-//       true,
-//       ['encrypt', 'decrypt']
-//     );
+type AuthPageProps = {
+    csrf: string,
+    service: string,
+    recipient: string
+}
+
+const AuthPage = (props: AuthPageProps) => {
+    const { service, recipient } = props;
+    // const [recipientInput, setRecipientInput] = useState("");
+    // const [serviceSelect, setServiceSelect] = useState("github");
+
+    // useEffect(() => {
+
+    //   }, [])
+
+    return (
+        <React.StrictMode>
+            <GlobalStyle />
+        <CenteredContainer fullscreen>
+      <CenteredContainer>
+        <Header2 style={{ margin: ".4rem" }}>Someone sent you a secret</Header2>
+        <Header3 small>
+          Please verify your identity to reveal this message.
+        </Header3>
+        <Spacer space="3rem" />
+        <TextAlignWrapper align="left">
+          <Label htmlFor="usernameEmail">Username / Email</Label>
+        </TextAlignWrapper>
+        <Input
+          variant="disabled-medium"
+          id="usernameEmail"
+          value={recipient}
+        />
+        <Spacer space="3rem" />
+        <TextAlignWrapper align="left">
+          <Label htmlFor="service">Service</Label>
+        </TextAlignWrapper>
+        <Input variant="disabled-medium" id="service" value={service} />
+        <Spacer space="3rem" />
+        <a href={`https://intended.link/auth/${service}`}>
+            <Button variant="primary" wide onClick={() => {}}>
+            Verify
+            </Button>
+        </a>
+      </CenteredContainer>
+    </CenteredContainer>
+    </React.StrictMode>
+    );
+}
+
+export default AuthPage;

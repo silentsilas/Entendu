@@ -8,7 +8,6 @@ defmodule EntenduWeb.LinkController do
 
   alias Entendu.Links
   alias Links.Link
-  alias Ecto.Changeset
   alias EntenduWeb.FallbackController
 
   action_fallback(FallbackController)
@@ -17,23 +16,13 @@ defmodule EntenduWeb.LinkController do
     render(conn, "just.html")
   end
 
-  defparams(
-    first_step(%{
-      burn_after_reading: [field: :boolean, default: false],
-      expires: :utc_datetime,
-      filename: :string,
-      filetype: :string,
-      text_content: :string,
-      file_content: :string
-    })
-  )
-
   def just(conn, params) do
-    with %Changeset{valid?: true} = changeset <- first_step(params),
-         link_params <- Params.to_map(changeset),
-         {:ok, %Link{} = link} <- Links.create_link(link_params) do
+    with {:ok, %Link{} = link} <- Links.create_link(params) do
       conn
       |> render("show_authorized.json", %{link: link})
+         else
+          test ->
+            IO.inspect(test)
     end
   end
 
@@ -41,18 +30,9 @@ defmodule EntenduWeb.LinkController do
     render(conn, "for.html")
   end
 
-  defparams(
-    second_step(%{
-      service: :string,
-      recipient: :string
-    })
-  )
-
-  def for(conn, %{link_id: link_id} = params) do
-    with %Changeset{valid?: true} = changeset <- first_step(params),
-         link_params <- Params.to_map(changeset),
-         %Link{} = link <- Links.get_link(link_id),
-         Links.update_link(link, link_params) do
+  def for(conn, %{"link_id" => link_id, "recipient" => recipient, "service" => service}) do
+    with %Link{} = link <- Links.get_link(link_id),
+         Links.update_link(link, %{ recipient: recipient, service: service}) do
       conn
       |> render("show_authorized.json", %{link: link})
     end
@@ -60,5 +40,13 @@ defmodule EntenduWeb.LinkController do
 
   def you_page(conn, _params) do
     render(conn, "you.html")
+  end
+
+  def auth_page(conn, %{ "id" => link_id}) do
+    with %Link{service: service, recipient: recipient} = link <- Links.get_link(link_id) do
+      conn
+      |> put_session(:current_link, link)
+      |> render("auth.html", %{ service: service, recipient: recipient })
+    end
   end
 end

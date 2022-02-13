@@ -14,15 +14,17 @@ import "../css/app.css"
 //     import {Socket} from "phoenix"
 //     import socket from "./socket"
 //
-import "phoenix_html"
-import {Socket} from "phoenix"
-import topbar from "topbar"
-import {LiveSocket} from "phoenix_live_view"
+import "phoenix_html";
+import {Socket} from "phoenix";
+import topbar from "topbar";
+import {LiveSocket} from "phoenix_live_view";
 
 import SplashPage from './pages/SplashPage';
-import JustPage from './pages/JustPage'
-import ForPage from './pages/ForPage'
-import YouPage from './pages/YouPage'
+import JustPage from './pages/JustPage';
+import ForPage from './pages/ForPage';
+import YouPage from './pages/YouPage';
+import AuthPage from './pages/AuthPage';
+import RevealPage from './pages/RevealPage';
 
 let csrfToken = document.querySelector("meta[name='csrf-token']").getAttribute("content")
 let liveSocket = new LiveSocket("/live", Socket, {params: {_csrf_token: csrfToken}})
@@ -42,5 +44,5 @@ liveSocket.connect()
 window.liveSocket = liveSocket
 
 window.Components = {
-  SplashPage, JustPage, ForPage, YouPage
+  SplashPage, JustPage, ForPage, YouPage, AuthPage, RevealPage
 }

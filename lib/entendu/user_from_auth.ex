@@ -6,6 +6,7 @@ defmodule Entendu.UserFromAuth do
   require Jason
 
   alias Ueberauth.Auth
+  alias Entendu.Links.Link
 
   def find_or_create(%Auth{} = auth) do
     {:ok, basic_info(auth)}
@@ -24,9 +25,15 @@ defmodule Entendu.UserFromAuth do
     nil
   end
 
+  defp emails_from_auth(%Auth{ extra: %Auth.Extra{ raw_info: %{ user: %{ "emails" => emails}}}}), do: emails
+
+  defp emails_from_auth(%Auth{ info: %{ email: email }}), do: [email]
+
+  defp emails_from_auth(_auth), do: []
+
   defp basic_info(auth) do
     IO.inspect(auth)
-    %{id: auth.uid, name: name_from_auth(auth), avatar: avatar_from_auth(auth)}
+    %{id: auth.uid, name: name_from_auth(auth), avatar: avatar_from_auth(auth), emails: emails_from_auth(auth)}
   end
 
   defp name_from_auth(auth) do
@@ -43,5 +50,10 @@ defmodule Entendu.UserFromAuth do
         Enum.join(name, " ")
       end
     end
+  end
+
+  def can_access?(recipient, emails) do
+    emails
+    |> Enum.any?(&( &1["verified"] == true and &1["email"] == recipient))
   end
 end

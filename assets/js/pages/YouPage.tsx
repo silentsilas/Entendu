@@ -8,11 +8,10 @@ const YouPage = () => {
     const keyHex = sessionStorage.getItem("key_hex");
     const ivHex = sessionStorage.getItem("iv_hex");
 
-    `${window.location.origin}/just/for/you/${linkId}#${keyHex}.${ivHex}`
-    return "";
+    return `${window.location.origin}/just/for/you/${linkId}#${keyHex}.${ivHex}`;
   };
 
-  const [url, setUrl] = useState(calculateUrl());
+  const [url, _setUrl] = useState(calculateUrl());
 
   const copyUrl = async () => {
     try { 
@@ -51,7 +50,7 @@ const YouPage = () => {
           <Input
             variant="disabled-light"
             id="encodedSecret"
-            value="\4RÏÇmÄyÆFÕ¬Ð$CÑÓÃyÛ"
+            value={url}
           />
           <Spacer space="3rem" />
           <SpaceBetweenContainer>

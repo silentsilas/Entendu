@@ -1,1 +1,1 @@
-<%= react_component("Components.ForPage") %>
+<%= react_component("Components.ForPage", %{ csrf: Plug.CSRFProtection.get_csrf_token() }) %>
