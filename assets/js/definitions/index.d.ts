@@ -1,3 +1,4 @@
-interface Link {
-    id: string
-}
+type IntendedUser = {
+  name: string;
+  emails: string[];
+};

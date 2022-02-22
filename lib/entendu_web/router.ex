@@ -1,6 +1,8 @@
 defmodule EntenduWeb.Router do
   use EntenduWeb, :router
 
+  alias EntenduWeb.Plugs.AuthorizeLink
+
   pipeline :browser do
     plug :accepts, ["html"]
     plug :fetch_session
@@ -14,6 +16,11 @@ defmodule EntenduWeb.Router do
     plug :accepts, ["json"]
   end
 
+  pipeline :authorized_links do
+    plug AuthorizeLink
+    plug Plug.Static, at: "/uploads", from: Path.expand('./uploads'), gzip: false
+  end
+
   scope "/", EntenduWeb do
     pipe_through :browser
 
@@ -24,6 +31,8 @@ defmodule EntenduWeb.Router do
     post "/just/for", LinkController, :for
     get "/just/for/you", LinkController, :you_page
     get "/just/for/you/:id", LinkController, :auth_page
+    get "/links/:id/text", LinkController, :text
+    get "/links/:id/file", LinkController, :file
   end
 
   scope "/auth", EntenduWeb do
@@ -32,6 +41,11 @@ defmodule EntenduWeb.Router do
     get "/:provider", AuthController, :request
     get "/:provider/callback", AuthController, :callback
     delete "/logout", AuthController, :delete
+  end
+
+  scope "/uploads", EntenduWeb do
+    pipe_through [:browser, :authorized_links]
+    get "/*path", FileNotFoundController, :index
   end
 
   # Other scopes may use custom stacks.

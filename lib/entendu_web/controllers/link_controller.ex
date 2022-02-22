@@ -9,6 +9,11 @@ defmodule EntenduWeb.LinkController do
   alias Entendu.Links
   alias Links.Link
   alias EntenduWeb.FallbackController
+  alias Entendu.EncryptedLink
+  alias Entendu.UserFromAuth
+  alias EntenduWeb.Plugs.AuthorizeLink
+
+  plug AuthorizeLink when action in [:text, :file]
 
   action_fallback(FallbackController)
 
@@ -17,12 +22,9 @@ defmodule EntenduWeb.LinkController do
   end
 
   def just(conn, params) do
-    with {:ok, %Link{} = link} <- Links.create_link(params) do
+    with {:ok, %{link_with_file: %Link{} = link}} <- Links.create_link(params) do
       conn
       |> render("show_authorized.json", %{link: link})
-         else
-          test ->
-            IO.inspect(test)
     end
   end
 
@@ -32,7 +34,7 @@ defmodule EntenduWeb.LinkController do
 
   def for(conn, %{"link_id" => link_id, "recipient" => recipient, "service" => service}) do
     with %Link{} = link <- Links.get_link(link_id),
-         Links.update_link(link, %{ recipient: recipient, service: service}) do
+         Links.update_link(link, %{recipient: recipient, service: service}) do
       conn
       |> render("show_authorized.json", %{link: link})
     end
@@ -42,11 +44,29 @@ defmodule EntenduWeb.LinkController do
     render(conn, "you.html")
   end
 
-  def auth_page(conn, %{ "id" => link_id}) do
+  def auth_page(conn, %{"id" => link_id}) do
     with %Link{service: service, recipient: recipient} = link <- Links.get_link(link_id) do
       conn
-      |> put_session(:current_link, link)
-      |> render("auth.html", %{ service: service, recipient: recipient })
+      |> put_session(:intended_link, link)
+      |> render("auth.html", %{intended_link: %{service: service, recipient: recipient}})
+    end
+  end
+
+  def text(conn, %{"id" => link_id}) do
+    with user = get_session(conn, :current_user),
+         %Link{recipient: recipient} = link <- Links.get_link(link_id),
+         true <- UserFromAuth.can_access?(recipient, user.emails) do
+      path = EncryptedLink.url({link.text_content, link})
+      send_file(conn, 200, path)
+    end
+  end
+
+  def file(conn, %{"id" => link_id}) do
+    with user = get_session(conn, :current_user),
+         %Link{recipient: recipient} = link <- Links.get_link(link_id),
+         true <- UserFromAuth.can_access?(recipient, user.emails) do
+      path = EncryptedLink.url({link.file_content, link})
+      send_file(conn, 200, path)
     end
   end
 end

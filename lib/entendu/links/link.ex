@@ -5,7 +5,17 @@ defmodule Entendu.Links.Link do
   import Ecto.Changeset
 
   @primary_key {:id, Ecto.UUID, autogenerate: true}
-
+  @derive {Jason.Encoder,
+           only: [
+             :burn_after_reading,
+             :expires,
+             :filename,
+             :filetype,
+             :text_content,
+             :file_content,
+             :recipient,
+             :service
+           ]}
   schema "links" do
     field :burn_after_reading, :boolean, default: false
     field :expires, :utc_datetime
@@ -30,7 +40,10 @@ defmodule Entendu.Links.Link do
       :recipient,
       :service
     ])
-    |> cast_attachments(attrs, [:text_content, :file_content])
+  end
 
+  def file_changeset(link, attrs) do
+    link
+    |> cast_attachments(attrs, [:text_content, :file_content])
   end
 end

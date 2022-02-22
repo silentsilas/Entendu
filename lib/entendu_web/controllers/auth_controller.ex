@@ -8,6 +8,8 @@ defmodule EntenduWeb.AuthController do
   plug Ueberauth
 
   alias Entendu.UserFromAuth
+  alias EntenduWeb.LinkView
+  alias Entendu.EncryptedLink
 
   def delete(conn, _params) do
     conn
@@ -23,27 +25,32 @@ defmodule EntenduWeb.AuthController do
   end
 
   def callback(%{assigns: %{ueberauth_auth: auth}} = conn, _params) do
-    # TODO: turn this into plug that only proceeds if current_link session var exists
-    %{ id: link_id, recipient: recipient } = get_session(conn, :current_link)
+    link = get_session(conn, :intended_link)
 
-    with {:ok, user} <- UserFromAuth.find_or_create(auth),
-      true <- UserFromAuth.can_access?(recipient, user.emails) do
-        # TODO: send over encrypted data that the frontend can decrypt
-        conn
-        |> put_session(:current_user, user)
-        |> configure_session(renew: true)
-        |> redirect(to: "/just/for/you/#{link_id}")
+    with %{id: link_id, recipient: recipient} <- link,
+         {:ok, user} <- UserFromAuth.find_or_create(auth),
+         true <- UserFromAuth.can_access?(recipient, user.emails) do
+      # TODO: send over encrypted data that the frontend can decrypt
 
+      conn
+      |> put_session(:current_user, user)
+      |> configure_session(renew: true)
+      |> redirect(to: "/just/for/you/#{link_id}")
     else
+      nil ->
+        conn
+        |> put_flash(:error, "Could not find link to authenticate against")
+        |> redirect(to: "/just/for/you/")
+
       false ->
         conn
-        |> put_flash(:error, "#{recipient} was not found in your list of verified emails")
-        |> redirect(to: "/just/for/you/#{link_id}")
+        |> put_flash(:error, "#{link.recipient} was not found in your list of verified emails")
+        |> redirect(to: "/just/for/you/#{link.id}")
 
       {:error, reason} ->
         conn
         |> put_flash(:error, reason)
-        |> redirect(to: "/just/for/you/#{link_id}")
+        |> redirect(to: "/just/for/you/#{link.id}")
     end
   end
 end

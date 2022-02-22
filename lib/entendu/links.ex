@@ -51,9 +51,10 @@ defmodule Entendu.Links do
 
   """
   def create_link(attrs \\ %{}) do
-    %Link{}
-    |> Link.changeset(attrs)
-    |> Repo.insert()
+    Ecto.Multi.new()
+    |> Ecto.Multi.insert(:link, Link.changeset(%Link{}, attrs))
+    |> Ecto.Multi.update(:link_with_file, &Link.file_changeset(&1.link, attrs))
+    |> Repo.transaction()
   end
 
   @doc """

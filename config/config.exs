@@ -14,7 +14,7 @@ config :entendu, Entendu.Repo, migration_primary_key: [type: :uuid]
 
 # Configures the endpoint
 config :entendu, EntenduWeb.Endpoint,
-  url: [host: "dev.intended.link"],
+  url: [host: "intended.link"],
   secret_key_base: "6PqoqDqHzsXs6pcm/QoI48rR0paD0gxubXBaR6j/b1fJNgL6Fawn5JPl82N/M2NR",
   render_errors: [view: EntenduWeb.ErrorView, accepts: ~w(html json), layout: false],
   pubsub_server: Entendu.PubSub,

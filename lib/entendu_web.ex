@@ -39,6 +39,14 @@ defmodule EntenduWeb do
 
       import ReactPhoenix.ClientSide
 
+      def current_user(conn) do
+        Plug.Conn.get_session(conn, :current_user)
+      end
+
+      def current_link(conn) do
+        Plug.Conn.get_session(conn, :current_link)
+      end
+
       # Include shared imports and aliases for views
       unquote(view_helpers())
     end
