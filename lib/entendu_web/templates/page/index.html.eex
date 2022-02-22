@@ -1,6 +1,6 @@
 <section>
 
-  <%= react_component("Components.SplashPage") %>
+  <%= react_component("Components.SplashPage", %{ error: get_flash(@conn, :error) }) %>
 
   <%= if @current_user do %>
     <h2>Welcome, <%= @current_user.name %>!</h2>

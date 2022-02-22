@@ -3,5 +3,6 @@
     service: @intended_link.service,
     recipient: @intended_link.recipient,
     user: current_user(@conn),
-    link: current_link(@conn)
+    link: current_link(@conn),
+    error: get_flash(@conn, :error)
 }) %>

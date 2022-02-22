@@ -1,8 +1,30 @@
-import React from "react";
+import React, { useEffect } from "react";
 
-import { CenteredContainer, SplashIconHeader, Header1, Header3, Spacer, Button, GlobalStyle } from '@intended/intended-ui';
+import {
+  CenteredContainer,
+  SplashIconHeader,
+  Header1,
+  Header3,
+  Spacer,
+  Button,
+  GlobalStyle,
+} from "@intended/intended-ui";
 
-const SplashPage = () => {
+type SplashPageProps = {
+  error: string;
+};
+
+const SplashPage = (props: SplashPageProps) => {
+  useEffect(() => {
+    displayErrors();
+  });
+
+  const displayErrors = () => {
+    const { error } = props;
+
+    if (error) alert(error);
+  };
+
   return (
     <React.StrictMode>
       <GlobalStyle />
@@ -15,7 +37,11 @@ const SplashPage = () => {
             and secretly.
           </Header3>
           <Spacer />
-          <Button variant="secondary" boldFont onClick={() => window.location.href = "/just"}>
+          <Button
+            variant="secondary"
+            boldFont
+            onClick={() => (window.location.href = "/just")}
+          >
             START SHARING
           </Button>
         </CenteredContainer>

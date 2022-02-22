@@ -1,6 +1,13 @@
 type IntendedUser = {
   name: string;
-  emails: string[];
+  emails: OAuthEmail[];
+  username: string;
+};
+
+type OAuthEmail = {
+  email: string;
+  primary: boolean;
+  verified: boolean;
 };
 
 type IntendedLink = {

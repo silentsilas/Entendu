@@ -40,9 +40,9 @@ defmodule EntenduWeb.Router do
   scope "/auth", EntenduWeb do
     pipe_through :browser
 
+    get "/logout", AuthController, :delete
     get "/:provider", AuthController, :request
     get "/:provider/callback", AuthController, :callback
-    delete "/logout", AuthController, :delete
   end
 
   scope "/uploads", EntenduWeb do
