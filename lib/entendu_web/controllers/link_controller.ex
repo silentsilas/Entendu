@@ -47,26 +47,15 @@ defmodule EntenduWeb.LinkController do
   def auth_page(conn, %{"id" => link_id}) do
     with %Link{service: service, recipient: recipient} = link <- Links.get_link(link_id) do
       conn
-      |> put_session(:intended_link, link)
+      |> put_session(:intended_link, %{service: service, recipient: recipient})
       |> render("auth.html", %{intended_link: %{service: service, recipient: recipient}})
     end
   end
 
-  def text(conn, %{"id" => link_id}) do
-    with user = get_session(conn, :current_user),
-         %Link{recipient: recipient} = link <- Links.get_link(link_id),
-         true <- UserFromAuth.can_access?(recipient, user) do
-      path = EncryptedLink.url({link.text_content, link})
-      send_file(conn, 200, path)
-    end
-  end
-
-  def file(conn, %{"id" => link_id}) do
-    with user = get_session(conn, :current_user),
-         %Link{recipient: recipient} = link <- Links.get_link(link_id),
-         true <- UserFromAuth.can_access?(recipient, user) do
-      path = EncryptedLink.url({link.file_content, link})
-      send_file(conn, 200, path)
+  def authorized_link(conn, %{"id" => link_id}) do
+    with %Link{} = link <- Links.get_link(link_id) do
+      conn
+      |> render("show_authorized.json", %{link: link})
     end
   end
 end
