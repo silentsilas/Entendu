@@ -20,6 +20,7 @@ type AuthPageProps = {
   service: string;
   recipient: string;
   user: IntendedUser | null;
+  error: string;
 };
 
 interface Keys {
@@ -40,6 +41,7 @@ const AuthPage = (props: AuthPageProps) => {
   const [secretFileUrl, setSecretFileUrl] = useState<string>("#");
   const [secretFileName, setSecretFileName] = useState<string>("");
   const [secretMessage, setSecretMessage] = useState<string>("Decrypting...");
+  const [messageRevealed, setMessageRevealed] = useState<boolean>(false);
 
   useEffect(() => {
     init().catch((reason) => {
@@ -47,12 +49,23 @@ const AuthPage = (props: AuthPageProps) => {
     });
   }, []);
 
+  const capitalize = (s: string) =>
+    (s && s[0].toUpperCase() + s.slice(1)) || "";
+
   const init = async (): Promise<void> => {
     const link: LinkFiles | null = await retrieveLink();
     const keys: Keys | null = await retrieveKeys();
     if (link && keys) {
       await decrypt(link, keys);
     }
+  };
+
+  const userEmails = (): string[] => {
+    return user
+      ? user.emails
+          .filter((email) => email.verified)
+          .map((email) => email.email)
+      : [];
   };
 
   const retrieveLink = async (): Promise<LinkFiles | null> => {
@@ -135,6 +148,7 @@ const AuthPage = (props: AuthPageProps) => {
       // And voila
       HexMix.arrayBufferToString(encodedText, (result: string) => {
         setSecretMessage(result);
+        setMessageRevealed(true);
       });
     }
     if (link?.file) {
@@ -153,21 +167,57 @@ const AuthPage = (props: AuthPageProps) => {
         type: link.filetype ? link.filetype : "text/plain",
       });
       setSecretFileUrl(window.URL.createObjectURL(blob));
+      setMessageRevealed(true);
     }
+  };
+
+  const renderFooter = (): JSX.Element => {
+    if (!user) return <div></div>;
+    return (
+      <Header3
+        small
+        style={{ color: "#CCCCCC", fontSize: "1.4rem", textAlign: "left" }}
+      >
+        Hello {user.name}, you are logged in to{" "}
+        <span style={{ color: "#A849CF" }}>{capitalize(service)}</span> as{" "}
+        <span style={{ color: "#32EFE7" }}>{user.username}</span>. This account
+        has the following emails associated with it:
+        <br />
+        <br />
+        <span style={{ color: "#32EFE7" }}>{userEmails().join(", ")}</span>
+        <br />
+        <br />
+        The intended recipient for this message is{" "}
+        <span style={{ color: "#32EFE7" }}>{recipient}</span> on{" "}
+        <span style={{ color: "#A849CF" }}>{capitalize(service)}</span>. If you
+        need to authenticate with a different account, you may do so by logging
+        out and accessing this link again. It's also possible that you have yet
+        to verify your email address on{" "}
+        <span style={{ color: "#A849CF" }}>{capitalize(service)}</span>.
+      </Header3>
+    );
   };
 
   const renderHeader = (): JSX.Element => {
     return (
       <div>
-        <Header2 style={{ margin: ".4rem" }}>Someone sent you a secret</Header2>
+        <Header2 style={{ margin: ".4rem" }}>
+          {user ? "You have been identified!" : "Someone sent you a secret"}
+        </Header2>
         {user ? (
           <Header3 small>
-            Hello {user.name}, you are logged in {service} which has the
-            following verified emails: {user.emails.join(", ")}
+            {messageRevealed
+              ? "The following message and/or file is for your eyes only."
+              : "Unfortunately, you are not the intended recipient."}
+
+            <br />
+            <br />
           </Header3>
         ) : (
           <Header3 small>
-            Please verify your identity to reveal this message.
+            The intended recipient for this message is {recipient} on{" "}
+            {capitalize(service)}. Please verify your identity to reveal this
+            message.
           </Header3>
         )}
       </div>
@@ -232,11 +282,13 @@ const AuthPage = (props: AuthPageProps) => {
             />
           </a>
           <Spacer space="3rem" />
-          <a href={`https://intended.link/auth/${service}`}>
+          <a href={`https://intended.link/auth/logout`}>
             <Button variant="primary" wide onClick={() => {}}>
-              Re-Verify
+              Logout
             </Button>
           </a>
+          <Spacer space="3rem" />
+          {renderFooter()}
         </CenteredContainer>
       </CenteredContainer>
     );
