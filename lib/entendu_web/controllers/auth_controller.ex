@@ -29,7 +29,7 @@ defmodule EntenduWeb.AuthController do
 
     with %{id: link_id, recipient: recipient} <- link,
          {:ok, user} <- UserFromAuth.find_or_create(auth),
-         true <- UserFromAuth.can_access?(recipient, user.emails) do
+         true <- UserFromAuth.can_access?(recipient, user) do
       # TODO: send over encrypted data that the frontend can decrypt
 
       conn

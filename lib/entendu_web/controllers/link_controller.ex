@@ -55,7 +55,7 @@ defmodule EntenduWeb.LinkController do
   def text(conn, %{"id" => link_id}) do
     with user = get_session(conn, :current_user),
          %Link{recipient: recipient} = link <- Links.get_link(link_id),
-         true <- UserFromAuth.can_access?(recipient, user.emails) do
+         true <- UserFromAuth.can_access?(recipient, user) do
       path = EncryptedLink.url({link.text_content, link})
       send_file(conn, 200, path)
     end
@@ -64,7 +64,7 @@ defmodule EntenduWeb.LinkController do
   def file(conn, %{"id" => link_id}) do
     with user = get_session(conn, :current_user),
          %Link{recipient: recipient} = link <- Links.get_link(link_id),
-         true <- UserFromAuth.can_access?(recipient, user.emails) do
+         true <- UserFromAuth.can_access?(recipient, user) do
       path = EncryptedLink.url({link.file_content, link})
       send_file(conn, 200, path)
     end

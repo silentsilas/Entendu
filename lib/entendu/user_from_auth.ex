@@ -33,12 +33,21 @@ defmodule Entendu.UserFromAuth do
 
   defp emails_from_auth(_auth), do: []
 
+  defp username_from_auth(%Auth{info: %{nickname: username}}), do: username
+
+  defp username_from_auth(auth) do
+    Logger.warn("#{auth.provider} needs to be configured for accessing their username!")
+    IO.inspect(auth, label: "username_from_auth")
+    nil
+  end
+
   defp basic_info(auth) do
     %{
       id: auth.uid,
       name: name_from_auth(auth),
       avatar: avatar_from_auth(auth),
-      emails: emails_from_auth(auth)
+      emails: emails_from_auth(auth),
+      username: username_from_auth(auth)
     }
   end
 
@@ -58,8 +67,11 @@ defmodule Entendu.UserFromAuth do
     end
   end
 
-  def can_access?(recipient, emails) do
-    emails
-    |> Enum.any?(&(&1["verified"] == true and &1["email"] == recipient))
-  end
+  def can_access?(recipient, %{emails: emails, username: username}),
+    do: email_matches?(recipient, emails) || username_matches?(recipient, username)
+
+  defp email_matches?(recipient, emails),
+    do: emails |> Enum.any?(&(&1["verified"] == true and &1["email"] == recipient))
+
+  defp username_matches?(recipient, username), do: String.trim(username) === recipient
 end
