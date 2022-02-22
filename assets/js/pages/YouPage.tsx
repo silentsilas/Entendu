@@ -1,8 +1,29 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 
-import { ProgressIndicator, Header2, Button, IconArrow, InputButtonWithIcon, Label, Input, CenteredContainer, SpaceBetweenContainer, Spacer, TextAlignWrapper, GlobalStyle } from "@intended/intended-ui";
+import {
+  ProgressIndicator,
+  Header2,
+  Button,
+  IconArrow,
+  InputButtonWithIcon,
+  Label,
+  Input,
+  CenteredContainer,
+  SpaceBetweenContainer,
+  Spacer,
+  TextAlignWrapper,
+  GlobalStyle,
+} from "@intended/intended-ui";
 
 const YouPage = () => {
+  const [url, setUrl] = useState("#");
+  const [encoded, setEncoded] = useState("");
+
+  useEffect(() => {
+    setUrl(calculateUrl());
+    setEncoded(calculateEncoded());
+  }, []);
+
   const calculateUrl = () => {
     const linkId = sessionStorage.getItem("link_id");
     const keyHex = sessionStorage.getItem("key_hex");
@@ -11,15 +32,19 @@ const YouPage = () => {
     return `${window.location.origin}/just/for/you/${linkId}#${keyHex}.${ivHex}`;
   };
 
-  const [url, _setUrl] = useState(calculateUrl());
+  const calculateEncoded = () => {
+    const encodedFile = sessionStorage.getItem("encoded_file");
+    const encodedMessage = sessionStorage.getItem("encoded_message");
+    return `${encodedMessage}${encodedFile}`;
+  };
 
   const copyUrl = async () => {
-    try { 
+    try {
       navigator.clipboard.writeText(url);
     } catch (err: any) {
       alert("Could not copy url to clipboard.");
     }
-  }
+  };
 
   return (
     <React.StrictMode>
@@ -47,20 +72,23 @@ const YouPage = () => {
               looking eh?:
             </Label>
           </TextAlignWrapper>
-          <Input
-            variant="disabled-light"
-            id="encodedSecret"
-            value={url}
-          />
+          <Input variant="disabled-light" id="encodedSecret" value={encoded} />
           <Spacer space="3rem" />
           <SpaceBetweenContainer>
-            <Button variant="secondary" onClick={() => window.location.href = "/just/for"}>
+            <Button
+              variant="secondary"
+              onClick={() => (window.location.href = "/just/for")}
+            >
               <IconArrow arrowDirection="left" />
             </Button>
-            <Button onClick={() => {
-              sessionStorage.clear();
-              window.location.href = "/just";
-            }}>Create Another Secret</Button>
+            <Button
+              onClick={() => {
+                sessionStorage.clear();
+                window.location.href = "/just";
+              }}
+            >
+              Create Another Secret
+            </Button>
           </SpaceBetweenContainer>
         </CenteredContainer>
       </CenteredContainer>

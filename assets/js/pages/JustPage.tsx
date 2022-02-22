@@ -88,6 +88,9 @@ const JustPage = (props: JustPageProps) => {
     form.append("file_content", blobData, fileName);
     form.append("filename", fileName);
     form.append("filetype", fileType);
+    HexMix.arrayBufferToString(encrypted, (result: string) => {
+      sessionStorage.setItem("encoded_file", result);
+    });
   };
 
   const textFormData = async (form: FormData, aesKey: AESKey) => {
@@ -102,6 +105,9 @@ const JustPage = (props: JustPageProps) => {
     );
     const blobData = new Blob([encrypted]);
     form.append("text_content", blobData, "secret_message.txt");
+    HexMix.arrayBufferToString(encrypted, (result: string) => {
+      sessionStorage.setItem("encoded_message", result);
+    });
   };
 
   const createKey = async (): Promise<AESKey> => {
