@@ -31,9 +31,9 @@ defmodule Entendu.EncryptedLink do
   # end
 
   # Override the persisted filenames:
-  def filename(_version, {_file, %{filename: filename}}) do
-    if filename, do: filename, else: "text"
-  end
+  # def filename(_version, {_file, %{filename: filename}}) do
+  #   if filename, do: filename, else: "text"
+  # end
 
   # Override the storage directory:
   def storage_dir(version, {_file, scope}) do

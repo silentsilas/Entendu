@@ -12,8 +12,12 @@ defmodule EntenduWeb.Plugs.AuthorizeLink do
   def init(_params) do
   end
 
-  def call(conn, params) do
-    %{params: %{"path" => [_, link_id, _]}} = conn
+  defp get_link_id(%{params: %{"id" => link_id}}), do: link_id
+
+  defp get_link_id(%{params: %{"path" => [_, link_id, _]}}), do: link_id
+
+  def call(conn, _params) do
+    link_id = get_link_id(conn)
     user = get_session(conn, :current_user)
 
     if !user do
@@ -23,8 +27,7 @@ defmodule EntenduWeb.Plugs.AuthorizeLink do
       |> render("error_code.json", message: "Unauthorized", code: 403)
       |> halt
     else
-      with {:ok, user} <- get_user_from_path(conn),
-           %Link{recipient: recipient} = link <- Links.get_link(link_id),
+      with %Link{recipient: recipient} = link <- Links.get_link(link_id),
            true <- UserFromAuth.can_access?(recipient, user) do
         conn
         |> assign(:link, link)
@@ -52,19 +55,4 @@ defmodule EntenduWeb.Plugs.AuthorizeLink do
       end
     end
   end
-
-  defp get_user_from_path(%{params: %{"path" => [_, link_id, _]}} = conn) do
-    get_session(conn, :current_user)
-    |> get_user_from_path()
-  end
-
-  defp get_user_from_path(nil) do
-    {:error, "User not authenticated"}
-  end
-
-  defp get_user_from_path(%{id: _, name: _, emails: _} = user) do
-    {:ok, user}
-  end
-
-  defp get_user_from_path(_), do: {:error, "Link does not exist"}
 end

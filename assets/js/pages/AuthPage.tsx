@@ -27,15 +27,18 @@ interface Keys {
   iv: string;
 }
 
-interface Link {
+interface LinkFiles {
   text: Blob | null;
   file: Blob | null;
+  filename: string | null;
+  filetype: string | null;
 }
 
 const AuthPage = (props: AuthPageProps) => {
   const { service, recipient, user } = props;
 
-  const [secretFileUrl, _setsecretFileUrl] = useState<string>("#");
+  const [secretFileUrl, setSecretFileUrl] = useState<string>("#");
+  const [secretFileName, setSecretFileName] = useState<string>("");
   const [secretMessage, setSecretMessage] = useState<string>("Decrypting...");
 
   useEffect(() => {
@@ -45,14 +48,14 @@ const AuthPage = (props: AuthPageProps) => {
   }, []);
 
   const init = async (): Promise<void> => {
+    const link: LinkFiles | null = await retrieveLink();
     const keys: Keys | null = await retrieveKeys();
-    const link: Link | null = await retrieveLink();
     if (link && keys) {
       await decrypt(link, keys);
     }
   };
 
-  const retrieveLink = async (): Promise<Link | null> => {
+  const retrieveLink = async (): Promise<LinkFiles | null> => {
     const urlSegments = new URL(document.URL).pathname.split("/");
     const linkId = urlSegments.pop() || urlSegments.pop();
     if (!linkId) {
@@ -60,14 +63,26 @@ const AuthPage = (props: AuthPageProps) => {
       return null;
     }
 
-    const textResponse = await fetch(`/uploads/links/${linkId}/text`);
+    const linkResponse = await fetch(`/links/${linkId}`);
+    const linkData: IntendedLink = await linkResponse.json();
+    const textResponse = await fetch(
+      `/uploads/links/${linkId}/secret_message.txt`
+    );
     const textData = await textResponse.blob();
-    const fileResponse = await fetch(`/uploads/links/${linkId}/file`);
+    const fileResponse = await fetch(
+      `/uploads/links/${linkId}/${linkData.filename}`
+    );
     const fileData = await fileResponse.blob();
+
+    if (linkData.filename) {
+      await setSecretFileName(linkData.filename);
+    }
 
     return {
       text: textData.size > 0 ? textData : null,
       file: fileData.size > 0 ? fileData : null,
+      filename: linkData.filename,
+      filetype: linkData.filetype,
     };
   };
 
@@ -96,7 +111,7 @@ const AuthPage = (props: AuthPageProps) => {
     }
   };
 
-  const decrypt = async (link: Link, keys: Keys) => {
+  const decrypt = async (link: LinkFiles, keys: Keys) => {
     const convertedKey = HexMix.hexToUint8(keys.key);
     const convertedIv = HexMix.hexToUint8(keys.iv);
     const importedKey = await window.crypto.subtle.importKey(
@@ -123,6 +138,21 @@ const AuthPage = (props: AuthPageProps) => {
       });
     }
     if (link?.file) {
+      const uploadedFile = await link.file.arrayBuffer();
+      const encodedFile = await window.crypto.subtle.decrypt(
+        {
+          name: "AES-GCM",
+          length: 256,
+          iv: convertedIv,
+        },
+        importedKey,
+        uploadedFile
+      );
+
+      const blob = new Blob([encodedFile], {
+        type: link.filetype ? link.filetype : "text/plain",
+      });
+      setSecretFileUrl(window.URL.createObjectURL(blob));
     }
   };
 
@@ -193,12 +223,14 @@ const AuthPage = (props: AuthPageProps) => {
           <TextAlignWrapper align="left">
             <Label htmlFor="service">Secret File</Label>
           </TextAlignWrapper>
-          <InputButtonWithIcon
-            variant="download"
-            id="downloadfile"
-            value={secretFileUrl}
-            onClick={() => {}}
-          />
+          <a href={secretFileUrl} download style={{ width: "100%" }}>
+            <InputButtonWithIcon
+              variant="download"
+              id="downloadfile"
+              value={secretFileName}
+              onClick={() => {}}
+            />
+          </a>
           <Spacer space="3rem" />
           <a href={`https://intended.link/auth/${service}`}>
             <Button variant="primary" wide onClick={() => {}}>
