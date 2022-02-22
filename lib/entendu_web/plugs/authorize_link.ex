@@ -25,7 +25,7 @@ defmodule EntenduWeb.Plugs.AuthorizeLink do
     else
       with {:ok, user} <- get_user_from_path(conn),
            %Link{recipient: recipient} = link <- Links.get_link(link_id),
-           true <- UserFromAuth.can_access?(recipient, user.emails) do
+           true <- UserFromAuth.can_access?(recipient, user) do
         conn
         |> assign(:link, link)
       else

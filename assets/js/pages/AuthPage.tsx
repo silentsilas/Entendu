@@ -84,6 +84,8 @@ const AuthPage = (props: AuthPageProps) => {
     } else {
       key = fragmentData[0];
       iv = fragmentData[1];
+      sessionStorage.setItem("link_key", key);
+      sessionStorage.setItem("link_iv", iv);
     }
 
     if (key && iv) {
