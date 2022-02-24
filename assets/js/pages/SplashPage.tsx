@@ -36,7 +36,6 @@ const SplashPage = (props: SplashPageProps) => {
           top: "50%",
           transform: "translate(0, -50%)",
         }}
-        className="centered-container"
       >
         <CenteredContainer wide>
           <SplashIconHeader style={{ width: "100%", maxWidth: "440px" }} />
