@@ -40,12 +40,17 @@ const SplashPage = (props: SplashPageProps) => {
         <CenteredContainer wide>
           <SplashIconHeader style={{ width: "100%", maxWidth: "440px" }} />
           <Header1>
-            <span className="splashHeader">Securely Share Your Secrets</span>
+            <span
+              className="splashHeader"
+              style={{ display: "block", marginTop: "20px" }}
+            >
+              Securely Share Your Secrets
+            </span>
           </Header1>
           <Header3>
             <span className="splashSubheader">
-              With Intended Link you can easily share messages and files
-              securely and secretly.
+              With Intended Link, you can send messages and files to any social
+              account in a secure and private manner.
             </span>
           </Header3>
           <Spacer />

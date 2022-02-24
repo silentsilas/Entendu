@@ -182,13 +182,13 @@ const JustPage = (props: JustPageProps) => {
           <ProgressIndicator currentProgress={1} />
           <Header2>Create a secret</Header2>
           <TextAlignWrapper align="left">
-            <Label htmlFor="secretInput">Enter your secret here</Label>
+            <Label htmlFor="secretInput">Enter a secret message</Label>
           </TextAlignWrapper>
           <TextArea
             id="secretInput"
             value={secretInput}
             onChange={handleChange}
-            placeholder="Tell me your secrets"
+            placeholder="Only your intended recipient will see this message."
           />
           <Spacer space="2rem" />
           <TextAlignWrapper align="center">

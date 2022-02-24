@@ -1,4 +1,4 @@
-<main role="main" style="height: 100vh;">
+<main role="main">
   <a href="/">
     <img src="<%= Routes.static_path(@conn, "/images/logo.png") %>" class="logo" />
   </a>

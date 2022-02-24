@@ -99,7 +99,20 @@
   background: none !important;
 }
 
-@media screen and (max-width: 800px) {
+html {
+  height: 100%;
+}
+
+@media screen and (min-width: 1025px) {
+  .centered-container {
+    margin-top: 0px;
+    position: absolute;
+    top: 50%;
+    transform: translate(0, -50%);
+  }
+}
+
+@media screen and (max-width: 1024px) {
   .logo {
     display: block;
     margin-left: auto;
