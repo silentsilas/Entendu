@@ -10,7 +10,7 @@ use Mix.Config
 # which you should run after static files are built and
 # before starting your production server.
 config :entendu, EntenduWeb.Endpoint,
-  url: [host: "example.com", port: 80],
+  url: [host: "intended.link", port: 80],
   cache_static_manifest: "priv/static/cache_manifest.json"
 
 # Do not print debug messages in production
@@ -45,8 +45,7 @@ config :logger, level: :info
 # We also recommend setting `force_ssl` in your endpoint, ensuring
 # no data is ever sent via http, always redirecting to https:
 #
-#     config :entendu, EntenduWeb.Endpoint,
-#       force_ssl: [hsts: true]
+config :my_app, EntenduWeb.Endpoint, force_ssl: [rewrite_on: [:x_forwarded_proto]]
 #
 # Check `Plug.SSL` for all available options in `force_ssl`.
 
