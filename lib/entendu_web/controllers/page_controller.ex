@@ -6,6 +6,8 @@ defmodule EntenduWeb.PageController do
   use EntenduWeb, :controller
 
   def index(conn, _params) do
-    render(conn, "index.html", current_user: get_session(conn, :current_user))
+    conn
+    |> clear_session()
+    |> render("index.html")
   end
 end

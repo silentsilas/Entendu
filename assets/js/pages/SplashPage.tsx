@@ -28,13 +28,26 @@ const SplashPage = (props: SplashPageProps) => {
   return (
     <React.StrictMode>
       <GlobalStyle />
-      <CenteredContainer fullscreen>
+      <CenteredContainer
+        fullscreen
+        style={{
+          background: "none",
+          position: "absolute",
+          top: "50%",
+          transform: "translate(0, -50%)",
+        }}
+        className="centered-container"
+      >
         <CenteredContainer wide>
-          <SplashIconHeader />
-          <Header1>Securely Share Your Secrets</Header1>
+          <SplashIconHeader style={{ width: "100%", maxWidth: "440px" }} />
+          <Header1>
+            <span className="splashHeader">Securely Share Your Secrets</span>
+          </Header1>
           <Header3>
-            With Intended Link you can easily share messages and files securely
-            and secretly.
+            <span className="splashSubheader">
+              With Intended Link you can easily share messages and files
+              securely and secretly.
+            </span>
           </Header3>
           <Spacer />
           <Button

@@ -1,3 +1,6 @@
-<main role="main">
+<main role="main" style="height: 100vh;">
+  <a href="/">
+    <img src="<%= Routes.static_path(@conn, "/images/logo.png") %>" class="logo" />
+  </a>
   <%= @inner_content %>
 </main>

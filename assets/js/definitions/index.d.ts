@@ -12,5 +12,7 @@ type OAuthEmail = {
 
 type IntendedLink = {
   filename: string | null,
-  filetype: string | null
+  filetype: string | null,
+  text_content: string | null,
+  file_content: string | null
 };

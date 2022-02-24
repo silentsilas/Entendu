@@ -49,7 +49,7 @@ const YouPage = () => {
   return (
     <React.StrictMode>
       <GlobalStyle />
-      <CenteredContainer fullscreen>
+      <CenteredContainer fullscreen className="centered-container">
         <CenteredContainer>
           <ProgressIndicator currentProgress={3} />
           <Header2>Share the secret</Header2>

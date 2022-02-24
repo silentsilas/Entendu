@@ -74,7 +74,11 @@ const JustPage = (props: JustPageProps) => {
     }
   };
 
-  const fileFormData = async (form: FormData, aesKey: AESKey) => {
+  const fileFormData = async (
+    form: FormData,
+    aesKey: AESKey
+  ): Promise<FormData> => {
+    if (!fileInput) return form;
     const encoded = HexMix.stringToArrayBuffer(fileInput as string);
     const encrypted = await window.crypto.subtle.encrypt(
       {
@@ -91,9 +95,14 @@ const JustPage = (props: JustPageProps) => {
     HexMix.arrayBufferToString(encrypted, (result: string) => {
       sessionStorage.setItem("encoded_file", result);
     });
+    return form;
   };
 
-  const textFormData = async (form: FormData, aesKey: AESKey) => {
+  const textFormData = async (
+    form: FormData,
+    aesKey: AESKey
+  ): Promise<FormData> => {
+    if (!secretInput) return form;
     const encoded = HexMix.stringToArrayBuffer(secretInput);
     const encrypted = await window.crypto.subtle.encrypt(
       {
@@ -108,6 +117,7 @@ const JustPage = (props: JustPageProps) => {
     HexMix.arrayBufferToString(encrypted, (result: string) => {
       sessionStorage.setItem("encoded_message", result);
     });
+    return form;
   };
 
   const createKey = async (): Promise<AESKey> => {
@@ -141,9 +151,9 @@ const JustPage = (props: JustPageProps) => {
     }
 
     const key = await createKey();
-    const formData = new FormData();
-    await fileFormData(formData, key);
-    await textFormData(formData, key);
+    let formData = new FormData();
+    formData = await fileFormData(formData, key);
+    formData = await textFormData(formData, key);
 
     try {
       const link: Response = await fetch(`${window.location.origin}/just`, {
@@ -167,7 +177,7 @@ const JustPage = (props: JustPageProps) => {
   return (
     <React.StrictMode>
       <GlobalStyle />
-      <CenteredContainer fullscreen>
+      <CenteredContainer fullscreen className="centered-container">
         <CenteredContainer>
           <ProgressIndicator currentProgress={1} />
           <Header2>Create a secret</Header2>

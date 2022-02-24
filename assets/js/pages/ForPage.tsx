@@ -1,11 +1,23 @@
 import React, { useState } from "react";
 
-import { ProgressIndicator, Header2, Button, IconArrow, Label, Input, Select, CenteredContainer, SpaceBetweenContainer, Spacer, TextAlignWrapper, GlobalStyle } from "@intended/intended-ui";
-
+import {
+  ProgressIndicator,
+  Header2,
+  Button,
+  IconArrow,
+  Label,
+  Input,
+  Select,
+  CenteredContainer,
+  SpaceBetweenContainer,
+  Spacer,
+  TextAlignWrapper,
+  GlobalStyle,
+} from "@intended/intended-ui";
 
 type ForPageProps = {
-  csrf: string
-}
+  csrf: string;
+};
 
 const ForPage = (props: ForPageProps) => {
   const [recipientInput, setRecipientInput] = useState("");
@@ -35,20 +47,20 @@ const ForPage = (props: ForPageProps) => {
     }
 
     const formData = new FormData();
-    formData.append('recipient', recipientInput);
-    formData.append('service', serviceSelect);
+    formData.append("recipient", recipientInput);
+    formData.append("service", serviceSelect);
     formData.append("link_id", linkId);
 
     try {
-      const results = await fetch(`${window.location.origin}/just/for`, { 
+      const results = await fetch(`${window.location.origin}/just/for`, {
         headers: {
-          "X-CSRF-Token": props.csrf
+          "X-CSRF-Token": props.csrf,
         },
         body: formData,
-        method: "POST"
+        method: "POST",
       });
       if (!results.ok) {
-        throw new Error('Network response was not OK');
+        throw new Error("Network response was not OK");
       }
 
       await results.json();
@@ -61,7 +73,7 @@ const ForPage = (props: ForPageProps) => {
   return (
     <React.StrictMode>
       <GlobalStyle />
-      <CenteredContainer fullscreen>
+      <CenteredContainer fullscreen className="centered-container">
         <CenteredContainer>
           <ProgressIndicator currentProgress={2} />
           <Header2>Tell Someone</Header2>
@@ -79,7 +91,8 @@ const ForPage = (props: ForPageProps) => {
           <Spacer space="2.5rem" />
           <TextAlignWrapper align="left">
             <Label htmlFor="serviceSelector">
-              What type of account is the above username or email associated with?
+              What type of account is the above username or email associated
+              with?
             </Label>
           </TextAlignWrapper>
           <Select
@@ -87,11 +100,14 @@ const ForPage = (props: ForPageProps) => {
             onChange={handleServiceChange}
             value={serviceSelect}
           >
-            <option value='github'>Github</option>
-            </Select>
+            <option value="github">Github</option>
+          </Select>
           <Spacer space="3rem" />
           <SpaceBetweenContainer>
-            <Button variant="secondary" onClick={() => window.location.href = "/just"}>
+            <Button
+              variant="secondary"
+              onClick={() => (window.location.href = "/just")}
+            >
               <IconArrow arrowDirection="left" />
             </Button>
             <Button onClick={postContacts}>Generate Secret Code</Button>

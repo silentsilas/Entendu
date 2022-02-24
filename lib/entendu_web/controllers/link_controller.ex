@@ -36,6 +36,7 @@ defmodule EntenduWeb.LinkController do
     with %Link{} = link <- Links.get_link(link_id),
          Links.update_link(link, %{recipient: recipient, service: service}) do
       conn
+      |> put_session(:intended_link, %{})
       |> render("show_authorized.json", %{link: link})
     end
   end
@@ -45,9 +46,9 @@ defmodule EntenduWeb.LinkController do
   end
 
   def auth_page(conn, %{"id" => link_id}) do
-    with %Link{service: service, recipient: recipient} = link <- Links.get_link(link_id) do
+    with %Link{id: id, service: service, recipient: recipient} = link <- Links.get_link(link_id) do
       conn
-      |> put_session(:intended_link, %{service: service, recipient: recipient})
+      |> put_session(:intended_link, %{id: id, service: service, recipient: recipient})
       |> render("auth.html", %{intended_link: %{service: service, recipient: recipient}})
     end
   end

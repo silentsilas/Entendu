@@ -40,12 +40,12 @@ const AuthPage = (props: AuthPageProps) => {
 
   const [secretFileUrl, setSecretFileUrl] = useState<string>("#");
   const [secretFileName, setSecretFileName] = useState<string>("");
-  const [secretMessage, setSecretMessage] = useState<string>("Decrypting...");
+  const [secretMessage, setSecretMessage] = useState<string>("");
   const [messageRevealed, setMessageRevealed] = useState<boolean>(false);
 
   useEffect(() => {
     init().catch((reason) => {
-      alert(reason);
+      console.log(reason);
     });
   }, []);
 
@@ -55,7 +55,7 @@ const AuthPage = (props: AuthPageProps) => {
   const init = async (): Promise<void> => {
     const link: LinkFiles | null = await retrieveLink();
     const keys: Keys | null = await retrieveKeys();
-    if (link && keys) {
+    if (link && keys && user) {
       await decrypt(link, keys);
     }
   };
@@ -77,25 +77,36 @@ const AuthPage = (props: AuthPageProps) => {
     }
 
     const linkResponse = await fetch(`/links/${linkId}`);
-    const linkData: IntendedLink = await linkResponse.json();
-    const textResponse = await fetch(
-      `/uploads/links/${linkId}/secret_message.txt`
-    );
-    const textData = await textResponse.blob();
-    const fileResponse = await fetch(
-      `/uploads/links/${linkId}/${linkData.filename}`
-    );
-    const fileData = await fileResponse.blob();
+    let linkData: IntendedLink | null;
+    let textData = null;
+    let fileData = null;
+    if (linkResponse.status !== 200) {
+      throw new Error(linkResponse.statusText);
+      return null;
+    }
+    linkData = await linkResponse.json();
 
-    if (linkData.filename) {
-      await setSecretFileName(linkData.filename);
+    if (linkData) {
+      const textResponse = linkData.text_content
+        ? await fetch(`/uploads/links/${linkId}/secret_message.txt`)
+        : null;
+      textData = textResponse ? await textResponse.blob() : null;
+
+      const fileResponse = linkData.file_content
+        ? await fetch(`/uploads/links/${linkId}/${linkData.filename}`)
+        : null;
+      fileData = fileResponse ? await fileResponse.blob() : null;
+
+      if (linkData.filename) {
+        await setSecretFileName(linkData.filename);
+      }
     }
 
     return {
-      text: textData.size > 0 ? textData : null,
-      file: fileData.size > 0 ? fileData : null,
-      filename: linkData.filename,
-      filetype: linkData.filetype,
+      text: textData,
+      file: fileData,
+      filename: linkData ? linkData.filename : null,
+      filetype: linkData ? linkData.filetype : null,
     };
   };
 
@@ -107,13 +118,13 @@ const AuthPage = (props: AuthPageProps) => {
     fragmentData[0] = fragmentData[0].slice(1);
 
     if (fragmentData.length <= 1) {
-      key = sessionStorage.getItem("link_key");
-      iv = sessionStorage.getItem("link_iv");
+      key = sessionStorage.getItem("key_hex");
+      iv = sessionStorage.getItem("iv_hex");
     } else {
       key = fragmentData[0];
       iv = fragmentData[1];
-      sessionStorage.setItem("link_key", key);
-      sessionStorage.setItem("link_iv", iv);
+      sessionStorage.setItem("key_hex", key);
+      sessionStorage.setItem("iv_hex", iv);
     }
 
     if (key && iv) {
@@ -134,6 +145,7 @@ const AuthPage = (props: AuthPageProps) => {
       true,
       ["encrypt", "decrypt"]
     );
+
     if (link?.text) {
       const textFile = await link.text.arrayBuffer();
       const encodedText = await window.crypto.subtle.decrypt(
@@ -201,7 +213,7 @@ const AuthPage = (props: AuthPageProps) => {
   const renderHeader = (): JSX.Element => {
     return (
       <div>
-        <Header2 style={{ margin: ".4rem" }}>
+        <Header2 style={{ marginBottom: ".4rem" }}>
           {user ? "You have been identified!" : "Someone sent you a secret"}
         </Header2>
         {user ? (
@@ -226,7 +238,7 @@ const AuthPage = (props: AuthPageProps) => {
 
   const renderAuth = (): JSX.Element => {
     return (
-      <CenteredContainer fullscreen>
+      <CenteredContainer fullscreen className="centered-container">
         <CenteredContainer>
           {renderHeader()}
           <Spacer space="3rem" />
@@ -256,7 +268,7 @@ const AuthPage = (props: AuthPageProps) => {
 
   const renderReveal = (): JSX.Element => {
     return (
-      <CenteredContainer fullscreen>
+      <CenteredContainer fullscreen className="centered-container">
         <CenteredContainer>
           {renderHeader()}
           <Spacer space="3rem" />

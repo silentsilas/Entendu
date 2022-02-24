@@ -28,8 +28,7 @@ defmodule EntenduWeb.AuthController do
     link = get_session(conn, :intended_link)
 
     with %{id: link_id, recipient: recipient} <- link,
-         {:ok, user} <- UserFromAuth.find_or_create(auth),
-         true <- UserFromAuth.can_access?(recipient, user) do
+         {:ok, user} <- UserFromAuth.find_or_create(auth) do
       # TODO: send over encrypted data that the frontend can decrypt
 
       conn
@@ -41,11 +40,6 @@ defmodule EntenduWeb.AuthController do
         conn
         |> put_flash(:error, "Could not find link to authenticate against")
         |> redirect(to: "/just/for/you/")
-
-      false ->
-        conn
-        |> put_flash(:error, "#{link.recipient} was not found in your list of verified emails")
-        |> redirect(to: "/just/for/you/#{link.id}")
 
       {:error, reason} ->
         conn
