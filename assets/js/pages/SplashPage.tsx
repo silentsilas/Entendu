@@ -35,6 +35,7 @@ const SplashPage = (props: SplashPageProps) => {
           position: "absolute",
           top: "50%",
           transform: "translate(0, -50%)",
+          height: "auto",
         }}
       >
         <CenteredContainer wide>
