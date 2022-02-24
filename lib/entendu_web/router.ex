@@ -18,7 +18,7 @@ defmodule EntenduWeb.Router do
 
   pipeline :authorized_files do
     plug AuthorizeLink
-    plug Plug.Static, at: "/uploads", from: Path.expand('./uploads'), gzip: false
+    plug Plug.Static, at: "/uploads", from: {:entendu "priv/uploads"}, gzip: false
   end
 
   pipeline :authorized_link do

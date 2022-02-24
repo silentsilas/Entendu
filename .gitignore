@@ -35,5 +35,5 @@ npm-debug.log
 /priv/cert/
 
 dev.secret.exs
-/uploads/*
-!/uploads/.gitkeep
+priv/uploads/*
+!priv/uploads/.gitkeep

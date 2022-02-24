@@ -37,7 +37,7 @@ defmodule Entendu.EncryptedLink do
 
   # Override the storage directory:
   def storage_dir(version, {_file, scope}) do
-    "uploads/links/#{scope.id}"
+    "priv/uploads/links/#{scope.id}"
   end
 
   # Provide a default URL if there hasn't been a file uploaded
