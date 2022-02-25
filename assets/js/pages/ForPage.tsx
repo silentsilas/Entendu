@@ -34,12 +34,6 @@ const ForPage = (props: ForPageProps) => {
   };
 
   const postContacts = async () => {
-    // const fragmentData = window.location.hash.split('.');
-    // if (fragmentData.length <= 0) {
-    //   alert("No key found in fragment URI");
-    //   return;
-    // }
-
     const linkId = sessionStorage.getItem("link_id");
     if (!linkId) {
       alert("No created link found in storage");

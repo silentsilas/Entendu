@@ -24,6 +24,7 @@ import JustPage from './pages/JustPage';
 import ForPage from './pages/ForPage';
 import YouPage from './pages/YouPage';
 import AuthPage from './pages/AuthPage';
+import PrivacyPolicyPage from './pages/PrivacyPolicyPage';
 
 let csrfToken = document.querySelector("meta[name='csrf-token']").getAttribute("content")
 let liveSocket = new LiveSocket("/live", Socket, {params: {_csrf_token: csrfToken}})
@@ -43,5 +44,5 @@ liveSocket.connect()
 window.liveSocket = liveSocket
 
 window.Components = {
-  SplashPage, JustPage, ForPage, YouPage, AuthPage
+  SplashPage, JustPage, ForPage, YouPage, AuthPage, PrivacyPolicyPage
 }
