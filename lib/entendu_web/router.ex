@@ -35,6 +35,8 @@ defmodule EntenduWeb.Router do
     post "/just/for", LinkController, :for
     get "/just/for/you", LinkController, :you_page
     get "/just/for/you/:id", LinkController, :auth_page
+
+    get "/privacy-policy", PageController, :privacy
   end
 
   scope "/auth", EntenduWeb do

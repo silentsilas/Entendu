@@ -1,0 +1,3 @@
+<section>
+  <%= react_component("Components.PrivacyPolicyPage") %>
+</section>

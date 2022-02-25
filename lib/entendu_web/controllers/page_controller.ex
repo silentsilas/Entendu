@@ -10,4 +10,9 @@ defmodule EntenduWeb.PageController do
     |> clear_session()
     |> render("index.html")
   end
+
+  def privacy(conn, _params) do
+    conn
+    |> render("privacy_policy.html")
+  end
 end
