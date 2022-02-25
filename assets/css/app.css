@@ -97,6 +97,7 @@
 .centered-container {
   margin-top: 3rem;
   background: none !important;
+  height: auto;
 }
 
 html {
