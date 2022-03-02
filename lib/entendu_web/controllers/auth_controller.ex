@@ -8,8 +8,6 @@ defmodule EntenduWeb.AuthController do
   plug Ueberauth
 
   alias Entendu.UserFromAuth
-  alias EntenduWeb.LinkView
-  alias Entendu.EncryptedLink
 
   def delete(conn, _params) do
     conn
@@ -27,10 +25,8 @@ defmodule EntenduWeb.AuthController do
   def callback(%{assigns: %{ueberauth_auth: auth}} = conn, _params) do
     link = get_session(conn, :intended_link)
 
-    with %{id: link_id, recipient: recipient} <- link,
+    with %{id: link_id} <- link,
          {:ok, user} <- UserFromAuth.find_or_create(auth) do
-      # TODO: send over encrypted data that the frontend can decrypt
-
       conn
       |> put_session(:current_user, user)
       |> configure_session(renew: true)

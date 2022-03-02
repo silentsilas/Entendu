@@ -2,11 +2,9 @@ defmodule EntenduWeb.Plugs.AuthorizeLink do
   import Plug.Conn
   use EntenduWeb, :controller
 
-  alias Entendu.Repo
   alias Entendu.UserFromAuth
   alias Entendu.Links
   alias Entendu.Links.Link
-  alias EntenduWeb.FallbackController
   alias EntenduWeb.ErrorView
 
   def init(_params) do
@@ -23,7 +21,7 @@ defmodule EntenduWeb.Plugs.AuthorizeLink do
     if !user do
       conn
       |> put_status(403)
-      |> put_view(EntenduWeb.ErrorView)
+      |> put_view(ErrorView)
       |> render("error_code.json", message: "Unauthorized", code: 403)
       |> halt
     else
@@ -35,21 +33,21 @@ defmodule EntenduWeb.Plugs.AuthorizeLink do
         nil ->
           conn
           |> put_status(404)
-          |> put_view(EntenduWeb.ErrorView)
+          |> put_view(ErrorView)
           |> render("error_code.json", message: "Link could not be found", code: 404)
           |> halt
 
         false ->
           conn
           |> put_status(403)
-          |> put_view(EntenduWeb.ErrorView)
+          |> put_view(ErrorView)
           |> render("error_code.json", message: "Unauthorized", code: 403)
           |> halt
 
         {:error, reason} ->
           conn
           |> put_status(422)
-          |> put_view(EntenduWeb.ErrorView)
+          |> put_view(ErrorView)
           |> render("error_code.json", message: reason, code: 422)
           |> halt
       end

@@ -9,8 +9,6 @@ defmodule EntenduWeb.LinkController do
   alias Entendu.Links
   alias Links.Link
   alias EntenduWeb.FallbackController
-  alias Entendu.EncryptedLink
-  alias Entendu.UserFromAuth
   alias EntenduWeb.Plugs.AuthorizeLink
 
   plug AuthorizeLink when action in [:text, :file]
@@ -18,7 +16,8 @@ defmodule EntenduWeb.LinkController do
   action_fallback(FallbackController)
 
   def just_page(conn, _params) do
-    render(conn, "just.html")
+    conn
+    |> render("just.html")
   end
 
   def just(conn, params) do
@@ -46,7 +45,7 @@ defmodule EntenduWeb.LinkController do
   end
 
   def auth_page(conn, %{"id" => link_id}) do
-    with %Link{id: id, service: service, recipient: recipient} = link <- Links.get_link(link_id) do
+    with %Link{id: id, service: service, recipient: recipient} <- Links.get_link(link_id) do
       conn
       |> put_session(:intended_link, %{id: id, service: service, recipient: recipient})
       |> render("auth.html", %{intended_link: %{service: service, recipient: recipient}})

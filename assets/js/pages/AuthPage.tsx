@@ -35,6 +35,11 @@ interface LinkFiles {
   filetype: string | null;
 }
 
+interface GithubEmail {
+  email: string;
+  verified: boolean;
+}
+
 const AuthPage = (props: AuthPageProps) => {
   const { service, recipient, user } = props;
 
@@ -61,11 +66,24 @@ const AuthPage = (props: AuthPageProps) => {
   };
 
   const userEmails = (): string[] => {
+    if (!user?.emails) return [];
+    if (user.emails.length <= 0) return [];
     return user
       ? user.emails
-          .filter((email) => email.verified)
-          .map((email) => email.email)
+          .filter(verifiedUserEmails)
+          .map((email) => (typeof email == "string" ? email : email.email))
       : [];
+  };
+
+  const isGithubEmail = (email: string | GithubEmail): email is GithubEmail =>
+    (email as GithubEmail).verified !== undefined;
+
+  const verifiedUserEmails = (email: string | GithubEmail) => {
+    if (isGithubEmail(email)) {
+      return (email as GithubEmail).verified;
+    } else {
+      return true;
+    }
   };
 
   const retrieveLink = async (): Promise<LinkFiles | null> => {
@@ -73,6 +91,10 @@ const AuthPage = (props: AuthPageProps) => {
     const linkId = urlSegments.pop() || urlSegments.pop();
     if (!linkId) {
       alert("Could not find intended link in URL");
+      return null;
+    }
+    if (!user) {
+      // no need to retrieve link if they weren't authenticated
       return null;
     }
 
@@ -190,10 +212,13 @@ const AuthPage = (props: AuthPageProps) => {
         small
         style={{ color: "#CCCCCC", fontSize: "1.4rem", textAlign: "left" }}
       >
-        Hello {user.name}, you are logged in to{" "}
-        <span style={{ color: "#A849CF" }}>{capitalize(service)}</span> as{" "}
-        <span style={{ color: "#32EFE7" }}>{user.username}</span>. This account
-        has the following emails associated with it:
+        Hello{user.name ? ` ${user.name}` : ""}! You are logged in to{" "}
+        <span style={{ color: "#A849CF" }}>{capitalize(service)}</span>
+        {user.username ? " as " : ""}
+        <span style={{ color: "#32EFE7" }}>
+          {user.username ? `${user.username}` : ""}
+        </span>
+        . This account has the following emails associated with it:
         <br />
         <br />
         <span style={{ color: "#32EFE7" }}>{userEmails().join(", ")}</span>

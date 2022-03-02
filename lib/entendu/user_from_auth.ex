@@ -6,7 +6,6 @@ defmodule Entendu.UserFromAuth do
   require Jason
 
   alias Ueberauth.Auth
-  alias Entendu.Links.Link
 
   def find_or_create(%Auth{} = auth) do
     {:ok, basic_info(auth)}
@@ -67,11 +66,26 @@ defmodule Entendu.UserFromAuth do
     end
   end
 
-  def can_access?(recipient, %{emails: emails, username: username}),
+  def can_access?(recipient, %{emails: emails, username: username} = stuff),
     do: email_matches?(recipient, emails) || username_matches?(recipient, username)
 
   defp email_matches?(recipient, emails),
-    do: emails |> Enum.any?(&(&1["verified"] == true and &1["email"] == recipient))
+    do:
+      emails
+      |> Enum.filter(&only_verified_emails/1)
+      |> Enum.map(&retrieve_email/1)
+      |> Enum.any?(&(&1 == recipient))
+
+  # Github lists unverified emails and need to be filtered out
+  defp only_verified_emails(%{"verified" => is_verified}), do: is_verified
+
+  defp only_verified_emails(_), do: true
+
+  defp retrieve_email(%{"email" => email}), do: email
+
+  defp retrieve_email(email), do: email
+
+  defp username_matches?(_recipient, nil), do: false
 
   defp username_matches?(recipient, username), do: String.trim(username) === recipient
 end

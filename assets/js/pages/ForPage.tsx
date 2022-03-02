@@ -95,6 +95,7 @@ const ForPage = (props: ForPageProps) => {
             value={serviceSelect}
           >
             <option value="github">Github</option>
+            <option value="google">Gmail</option>
           </Select>
           <Spacer space="3rem" />
           <SpaceBetweenContainer>
