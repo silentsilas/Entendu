@@ -34,6 +34,10 @@ config :ueberauth, Ueberauth.Strategy.Github.OAuth,
   client_id: System.get_env("GH_OAUTH_ID"),
   client_secret: System.get_env("GH_OAUTH_SECRET")
 
+config :ueberauth, Ueberauth.Strategy.Google.OAuth,
+  client_id: System.get_env("GOOGLE_OAUTH_ID"),
+  client_secret: System.get_env("GOOGLE_OAUTH_SECRET")
+
 # ## Using releases (Elixir v1.9+)
 #
 # If you are doing OTP releases, you need to instruct Phoenix

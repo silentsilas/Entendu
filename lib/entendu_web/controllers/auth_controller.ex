@@ -27,8 +27,6 @@ defmodule EntenduWeb.AuthController do
 
     with %{id: link_id} <- link,
          {:ok, user} <- UserFromAuth.find_or_create(auth) do
-      # TODO: send over encrypted data that the frontend can decrypt
-
       conn
       |> put_session(:current_user, user)
       |> configure_session(renew: true)

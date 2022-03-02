@@ -30,7 +30,9 @@ config :phoenix, :json_library, Jason
 
 config :ueberauth, Ueberauth,
   providers: [
-    github: {Ueberauth.Strategy.Github, [default_scope: "user:email", allow_private_emails: true]}
+    github:
+      {Ueberauth.Strategy.Github, [default_scope: "user:email", allow_private_emails: true]},
+    google: {Ueberauth.Strategy.Google, [default_scope: "email"]}
   ]
 
 config :waffle,

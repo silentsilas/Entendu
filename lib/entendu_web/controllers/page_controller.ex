@@ -7,6 +7,7 @@ defmodule EntenduWeb.PageController do
 
   def index(conn, _params) do
     conn
+    |> clear_session()
     |> render("index.html")
   end
 
