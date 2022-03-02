@@ -66,7 +66,7 @@ defmodule Entendu.UserFromAuth do
     end
   end
 
-  def can_access?(recipient, %{emails: emails, username: username} = stuff),
+  def can_access?(recipient, %{emails: emails, username: username}),
     do: email_matches?(recipient, emails) || username_matches?(recipient, username)
 
   defp email_matches?(recipient, emails),
