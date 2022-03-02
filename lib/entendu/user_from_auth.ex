@@ -6,7 +6,6 @@ defmodule Entendu.UserFromAuth do
   require Jason
 
   alias Ueberauth.Auth
-  alias Entendu.Links.Link
 
   def find_or_create(%Auth{} = auth) do
     {:ok, basic_info(auth)}

@@ -75,6 +75,10 @@ const AuthPage = (props: AuthPageProps) => {
       alert("Could not find intended link in URL");
       return null;
     }
+    if (!user) {
+      // no need to retrieve link if they weren't authenticated
+      return null;
+    }
 
     const linkResponse = await fetch(`/links/${linkId}`);
     let linkData: IntendedLink | null;
